@@ -144,7 +144,6 @@ module.exports = async ({ messages }, client) => {
     if (!isGroup && command.category === 'moderation') return void M.reply('This command is ment to use in groups')
     if (!client.mods.includes(sender) && command.category === 'dev')
         return void M.reply('This command only can be accessed by the mods')
-    await experience(M, client, command)
     try {
         await command.execute(client, flags, context, M)
     } catch (error) {
