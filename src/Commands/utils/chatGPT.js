@@ -9,7 +9,7 @@ module.exports = {
     async execute(client, flag, arg, M) {
         const { apiKey, messagesMap } = client
         if (!arg) return M.reply('Provide your prompt to make request!')
-        if (!apiKey) return M.reply('Bot is currently down. Please wait ...')
+        if (!apiKey) return M.reply('API key is missing. Please make sure to provide a valid API key.')
         try {
             const ai = new OpenAIApi(new Configuration({ apiKey }))
             const messages = (await messagesMap.get(M.from)) ?? []
@@ -36,7 +36,7 @@ module.exports = {
         } catch (error) {
             client.log(error.message, 'red')
             return void (await M.reply(
-                error?.response?.data?.error?.message ?? 'An error occurred while processing the request.'
+                error?.response?.data?.error?.message ?? 'An error occurred while processing your response.'
             ))
         }
     }
