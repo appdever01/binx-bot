@@ -144,7 +144,7 @@ const start = async () => {
         }
         const code = Math.floor(100000 + Math.random() * 900000)
         verification.set(jid, { code, expiration: Date.now() + 120000 })
-        await client.sendMessage(jid, { text: `*Your OTP is ${code} *\n\nBinx AI © ${new Date().getFullYear()}`})
+        await client.sendMessage(jid, { text: `Your OTP is ${code} \n\nBinx AI © ${new Date().getFullYear()}`})
         setTimeout(() => verification.delete(jid), 120000)
         return void res.status(200).json({ successful: 'Open Your WhatsApp!' })
     })
