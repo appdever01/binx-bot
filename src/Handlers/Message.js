@@ -93,7 +93,7 @@ module.exports = async ({ messages }, client) => {
             await M.reply('👨🏻‍💻🔎🌐')
         } else if (type.time) {
             helper = await countryTime(type.time)
-            await M.reply('👨🏻‍💻🔎☀️🌡')
+            await M.reply('👨🏻‍💻⏰⌚️')
         } else if (type.weather) {
             helper = await weather(type.weather)
             await M.reply('👨🏻‍💻🔎☀️🌡')
@@ -101,7 +101,7 @@ module.exports = async ({ messages }, client) => {
             helper = await wikipedia(type.wikipedia)
             await M.reply('👨🏻‍💻🔎📚')
         } else if (type.lyrics) {
-            await M.reply('👨🏻‍💻🔎🎼')
+            await M.reply('👨🏻‍💻🔎🎵')
             const data = await client.utils.fetch(`https://weeb-api.vercel.app/genius?query=${type.lyrics}`)
             if (!data.length) return void M.reply("Couldn't find any lyrics")
             const image = await client.utils.getBuffer(data[0].image)
