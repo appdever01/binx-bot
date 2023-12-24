@@ -116,7 +116,7 @@ const wikipedia = async (query) => {
 }
 
 const google = async (query) => {
-    const results = await fetch(`https://weeb.api.vercel.app/google?query=${query}`)
+    const results = await fetch(`https://weeb-api.vercel.app/google?query=${query}`)
     let text = ''
     for (let i = 0; i < Math.min(results.length, 10); i++) {
         const { link, snippet, title } = results[i]
