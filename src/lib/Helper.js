@@ -25,7 +25,7 @@ To Get information which you don't know,
 Q: Can you tell about current exchange rate between Pakistan and USA?
 return { "google": "current exchange rate between Pakistan and USA" }
 
-To get deep details of a word, character, specific personality, person, queen,
+To get deep details of a word, character, specific personality, person, queen, players
 Q: Can you give me details of Langchain?
 return { "wikipedia": "Langchain" }
 
@@ -33,9 +33,9 @@ To get lyrics of any song with artist name,
 Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
 
-to get any kind of wallpaper or image, if (NSWF) return "NO"
-Q: Can you give the Naruto HD images or wallpaper?
-Return: { "gisearch": "Naruto" }
+to get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
+Q: Can you send me a picture, image or wallpaper ? 
+Return: { "gisearch": "image name" }
 
 For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
