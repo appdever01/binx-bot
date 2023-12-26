@@ -1,9 +1,10 @@
-const { ChatGPTHelperPrompt, transcribe, wikipedia, google, countryTime, weather, audioMerge, toSpeech } = require('../lib/Helper')
+const { ChatGPTHelperPrompt, transcribe, wikipedia, google, countryTime, weather, toSpeech } = require('../lib/Helper')
 const { Keys, complement } = require('../lib/Messages')
 const { serialize, decodeJid } = require('../lib/WAclient')
 const { getStats } = require('../lib/stats')
 const { Configuration, OpenAIApi } = require('openai')
-const { audioToSlice } = require('audio-slicer')
+const { audioToSlice, audioMerge } = require('audio-slicer')
+const emojis = require('emoji-strip')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 let helper = ''
