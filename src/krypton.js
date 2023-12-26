@@ -163,7 +163,7 @@ const start = async () => {
         const info = { daily: 0, subscription, count: 0, expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) }
         await client.daily.set(jid, info)
         const successful = `Congratulations 🎉🎊. You are now registered as a ${subscription} user 🥹😇`
-        await client.sendMessage(jid, { text: '@' + successful, mentions: [jid] })
+        await client.sendMessage(jid, { text: '' + successful, mentions: [jid] })
         return void res.json({ successful })
     })
 
