@@ -144,5 +144,4 @@ module.exports = {
     google,
     countryTime,
     weather,
-    audioMerge
 }
