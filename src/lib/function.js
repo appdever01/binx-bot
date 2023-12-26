@@ -56,7 +56,7 @@ const removeBG = async (input) => {
 }
 
 /**
- * Copyright by (AliAryanTech), give credit!
+
  * @param {string} cardName
  * @param {string} expiryDate
  * @returns {Promise<Buffer>}
