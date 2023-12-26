@@ -34,7 +34,7 @@ const start = async () => {
         version: (await fetchLatestBaileysVersion()).version,
         auth: state,
         logger: P({ level: 'silent' }),
-        browser: ['Binx-ChatGPT', 'silent', '4.0.0'],
+        browser: ['Binx', 'silent', '4.0.0'],
         printQRInTerminal: true
     })
 
