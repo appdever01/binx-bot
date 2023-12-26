@@ -9,7 +9,7 @@ const exec = promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const path = require('path')
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 4 features (current time, google search, weather, wikipedia details), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 4 features (current time, google search, weather, wikipedia details, voice response), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
@@ -42,6 +42,29 @@ Return: { "gisearch": "Naruto" }
 For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
 return { "normal": null }`
+
+const audioMerge = async (audios) => {
+    if (audios.length < 2) return audios[0] || []
+    try {
+        const directory = 'temporary_merge'
+        await fs.ensureDir(directory)
+        audios.forEach(async (buffer, index) => {
+            const filename = path.join(directory, `audio_${index}.mp3`)
+            await fs.writeFile(filename, buffer)
+        })
+        const filename = path.join(tmpdir(), `${Math.random().toString(36)}.mp3`)
+        const files = audios.map((_, index) => `-i ${path.join(directory, `audio_${index}.mp3`)}`).join(' ')
+        await exec(
+            `ffmpeg ${files} -filter_complex concat=n=${audios.length}:v=0:a=1 -strict -2 ${filename}`
+        )
+        const buffer = await fs.readFile(filename)
+        await Promise.all([fs.unlink(filename), fs.remove(directory)])
+        return buffer
+    } catch (error) {
+        console.error(error.message)
+        return []
+    }
+}
 
 const toSpeech = (text) =>
     googleTTS
@@ -122,14 +145,14 @@ const weather = async (query) => {
         const sunset = new Date(sys.sunset * 1000).toLocaleTimeString()
         const weatherDescription = results.weather[0].description
         const text = `
-Country: ${sys.country}, Location: ${name}
-Temperature: ${main.temp}°C, Feels Like: ${main.feels_like}°C
-Min Temperature: ${main.temp_min}°C, Max Temperature: ${main.temp_max}°C
-Pressure: ${main.pressure} hPa, Humidity: ${main.humidity}%
-Wind Speed: ${wind.speed} km/h, Clouds: ${clouds.all}%
-Sunrise: ${sunrise}, Sunset: ${sunset}
-Weather Description: ${weatherDescription}
-`
+            Country: ${sys.country}, Location: ${name}
+            Temperature: ${main.temp}°C, Feels Like: ${main.feels_like}°C
+            Min Temperature: ${main.temp_min}°C, Max Temperature: ${main.temp_max}°C
+            Pressure: ${main.pressure} hPa, Humidity: ${main.humidity}%
+            Wind Speed: ${wind.speed} km/h, Clouds: ${clouds.all}%
+            Sunrise: ${sunrise}, Sunset: ${sunset}
+            Weather Description: ${weatherDescription}
+            `
         return text
     } catch (error) {
         console.error(error.message)
