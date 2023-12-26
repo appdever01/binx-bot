@@ -125,7 +125,14 @@ const serialize = (M, client) => {
                 M.from,
                 {
                     text,
-                    
+                    contextInfo: {
+                        externalAdReply: {
+                            title: client.name.toUpperCase(),
+                            body: 'Binx Bot ' + new Date().getFullYear(),
+                            thumbnail: readFileSync('./thumbnail.jpg'),
+                            mediaType: 1
+                        }
+                    }
                 },
                 {
                     quoted: M

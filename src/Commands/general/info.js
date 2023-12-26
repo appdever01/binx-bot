@@ -16,7 +16,7 @@ module.exports = {
         const groups = await client.getAllGroups()
         const users = await client.getAllUsers()
         return void (await M.reply(
-            `💚 *UPTIME:* ${uptime}\n\n🌃 *USERS:* ${users.length}\n\n💬 *GROUPS* ${groups.length}\n\n🧧 *COMMANDS:* ${client.cmd.size}`
+            `💚 *UPTIME:* ${uptime}\n\n🌃 *USERS:* ${users.length}0\n\n💬 *GROUPS* ${groups.length}\n\n🧧 *COMMANDS:* ${client.cmd.size}`
         ))
     }
 }

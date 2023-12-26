@@ -1,9 +1,10 @@
-const { ChatGPTHelperPrompt, transcribe, wikipedia, google, countryTime, weather, audioMerge, toSpeech } = require('../lib/Helper')
+const { ChatGPTHelperPrompt, transcribe, wikipedia, google, countryTime, weather, toSpeech } = require('../lib/Helper')
 const { Keys, complement } = require('../lib/Messages')
 const { serialize, decodeJid } = require('../lib/WAclient')
 const { getStats } = require('../lib/stats')
 const { Configuration, OpenAIApi } = require('openai')
-const { audioToSlice } = require('audio-slicer')
+const { audioToSlice, audioMerge } = require('audio-slicer')
+const emojis = require('emoji-strip')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 let helper = ''
@@ -30,10 +31,10 @@ module.exports = async ({ messages }, client) => {
             if (Date.now() > info.expiration.getTime()) {
                 info = { daily: 0, subscription: 'None', count: 0 }
                 await client.daily.set(M.sender, info)
-                return void M.reply('*Your Subscription has expired.*\n\nKindly visit https://binxai.tekcify.com to subscribe again.')
+                return void M.reply('Subscription has expired.')
             }
         }
-        if ((subscription === 'None' && count >= 10) || (subscription === 'Basic' && count >= 30) || daily) {
+        if ((subscription === 'None' && count >= 10) || (subscription === 'Basic' && count >= 45) || daily) {
             const currentTime = new Date().getTime()
             const lastTime = daily ? Number(daily) : 0
             const sinceLastTime = currentTime - lastTime
@@ -42,13 +43,13 @@ module.exports = async ({ messages }, client) => {
                 return void (await M.reply(
                     `🟨 You have exceeded your daily response at *${new Date(
                         lastTime
-                    ).toLocaleTimeString()} GMT +0*. Try again in *${minutesUntilNextTime} Minutes* or Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential 😇🔥`
+                    ).toLocaleTimeString()}*. Try again in *${minutesUntilNextTime} Minutes*`
                 ))
             }
             info.count = 0
             info.daily = currentTime
             await client.daily.set(M.sender, info)
-            return void M.reply('*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥')
+            return void M.reply('You are in Limit')
         }
         if (Keys.includes(M.type)) {
             const message = complement(M.type)
@@ -93,7 +94,7 @@ module.exports = async ({ messages }, client) => {
             await M.reply('👨🏻‍💻🔎🌐')
         } else if (type.time) {
             helper = await countryTime(type.time)
-            await M.reply('👨🏻‍💻⏰⌚️')
+            await M.reply('👨🏻‍💻🔎☀️🌡')
         } else if (type.weather) {
             helper = await weather(type.weather)
             await M.reply('👨🏻‍💻🔎☀️🌡')
@@ -105,7 +106,7 @@ module.exports = async ({ messages }, client) => {
             await client.daily.set(M.sender, info)
             helper = type.voice ? '🟩 Enable' : '🟥 Disable'
         } else if (type.lyrics) {
-            await M.reply('👨🏻‍💻🔎🎵')
+            await M.reply('👨🏻‍💻🔎🎼')
             const data = await client.utils.fetch(`https://weeb-api.vercel.app/genius?query=${type.lyrics}`)
             if (!data.length) return void M.reply("Couldn't find any lyrics")
             const image = await client.utils.getBuffer(data[0].image)
@@ -140,7 +141,7 @@ module.exports = async ({ messages }, client) => {
     const banned = (await client.DB.get('banned'))?.includes(M.sender) || false
     if (banned) return M.reply('You are banned from using the bot')
     const command = client.cmd.get(cmd) || client.cmd.find((command) => command.aliases?.includes(cmd))
-    if (!command) return void M.reply('No such command found buddy!')
+    if (!command) return void M.reply('No such command found! BAKA')
     if (!admins.includes(sender) && command.category === 'moderation')
         return void M.reply('This command can only be used by group or community admins')
     if (!client.isAdmin && command.category === 'moderation')
@@ -148,6 +149,7 @@ module.exports = async ({ messages }, client) => {
     if (!isGroup && command.category === 'moderation') return void M.reply('This command is ment to use in groups')
     if (!client.mods.includes(sender) && command.category === 'dev')
         return void M.reply('This command only can be accessed by the mods')
+    await experience(M, client, command)
     try {
         await command.execute(client, flags, context, M)
     } catch (error) {
@@ -180,27 +182,27 @@ const moderate = async (M, client, admins, body) => {
     }
 }
 
-// const experience = async (M, client, command) => {
-//     await client.exp.add(M.sender, command.exp || 10)
-//     const level = (await client.DB.get(`${M.sender}_LEVEL`)) || 0
-//     const experience = await client.exp.get(M.sender)
-//     const { requiredXpToLevelUp } = getStats(level)
-//     if (requiredXpToLevelUp > experience) return null
-//     await client.DB.add(`${M.sender}_LEVEL`, 1)
-//     client.sendMessage(
-//         M.from,
-//         {
-//             video: {
-//                 url: 'https://media.tenor.com/msfmevhmlDAAAAPo/anime-chibi.mp4'
-//             },
-//             caption: `Congratulations you leveled up from *${level} ---> ${level + 1}* 🎊`,
-//             gifPlayback: true
-//         },
-//         {
-//             quoted: M
-//         }
-//     )
-// }
+const experience = async (M, client, command) => {
+    await client.exp.add(M.sender, command.exp || 10)
+    const level = (await client.DB.get(`${M.sender}_LEVEL`)) || 0
+    const experience = await client.exp.get(M.sender)
+    const { requiredXpToLevelUp } = getStats(level)
+    if (requiredXpToLevelUp > experience) return null
+    await client.DB.add(`${M.sender}_LEVEL`, 1)
+    client.sendMessage(
+        M.from,
+        {
+            video: {
+                url: 'https://media.tenor.com/msfmevhmlDAAAAPo/anime-chibi.mp4'
+            },
+            caption: `Congratulations you leveled up from *${level} ---> ${level + 1}* 🎊`,
+            gifPlayback: true
+        },
+        {
+            quoted: M
+        }
+    )
+}
 
 const createSpeech = async (client, text) => {
     const audios = await toSpeech(text)
@@ -242,8 +244,8 @@ const chatGPT = async (M, client, context, voice = false) => {
     if (helper) helper = `\n\nchatGPT Helper: ${helper}`
     try {
         const messages = (await client.messagesMap.get(M.from)) || []
-        const prompt = `You are Binx Ai version 2.0, 
-                In case you can't answer a user's question or if they request a voicenote, current time, image, weather information, or the latest answer you can get context from your helper down below user message and make more comfortable reply e.g helper: info by google`
+        const prompt = `Roleplay as personal assistant, Your name ${client.name}, developed by Alι_Aryαɴ, You're much warm and friendly with user's, 
+                Incase you don't know how to answer user question you can get context from your helper down below user message and make more comfortable reply e.g helper: info by google`
         if (!messages.length)
             messages.push({
                 role: 'system',
@@ -268,7 +270,7 @@ const chatGPT = async (M, client, context, voice = false) => {
         helper = ''
         const text = res.content.replace(new RegExp(`^${client.name}: `), '')
         if (voice) {
-            const audio = await createSpeech(client, text)
+            const audio = await createSpeech(client, emojis(text))
             if (Buffer.isBuffer(audio)) {
                 await M.status('recording')
                 return void (await client.sendMessage(M.from, { audio }, { quoted: M }))

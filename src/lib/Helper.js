@@ -16,8 +16,7 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-if user say switch to voicenote or reply with voice then return true  { "voice": "true" }
-if user say switch to text response then return false  { "voice": "false" }
+if user say enable/disable voicenote or voicemode then return true if enable else false { "voice": "true" }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
@@ -28,7 +27,7 @@ To Get information which you don't know,
 Q: Can you tell about current exchange rate between Pakistan and USA?
 return { "google": "current exchange rate between Pakistan and USA" }
 
-To get deep details of a word, character, specific personality, person, queen, players
+To get deep details of a word, character, specific personality, person, queen,
 Q: Can you give me details of Langchain?
 return { "wikipedia": "Langchain" }
 
@@ -36,36 +35,13 @@ To get lyrics of any song with artist name,
 Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
 
-to get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
-Q: Can you send me a picture, image or wallpaper ? 
-Return: { "gisearch": "image name" }
+to get any kind of wallpaper or image, if (NSWF) return "NO"
+Q: Can you give the Naruto HD images or wallpaper?
+Return: { "gisearch": "Naruto" }
 
 For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
 return { "normal": null }`
-
-const audioMerge = async (audios) => {
-    if (audios.length < 2) return audios[0] || []
-    try {
-        const directory = 'temporary_merge'
-        await fs.ensureDir(directory)
-        audios.forEach(async (buffer, index) => {
-            const filename = path.join(directory, `audio_${index}.mp3`)
-            await fs.writeFile(filename, buffer)
-        })
-        const filename = path.join(tmpdir(), `${Math.random().toString(36)}.mp3`)
-        const files = audios.map((_, index) => `-i ${path.join(directory, `audio_${index}.mp3`)}`).join(' ')
-        await exec(
-            `ffmpeg ${files} -filter_complex concat=n=${audios.length}:v=0:a=1 -strict -2 ${filename}`
-        )
-        const buffer = await fs.readFile(filename)
-        await Promise.all([fs.unlink(filename), fs.remove(directory)])
-        return buffer
-    } catch (error) {
-        console.error(error.message)
-        return []
-    }
-}
 
 const toSpeech = (text) =>
     googleTTS

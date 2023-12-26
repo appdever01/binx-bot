@@ -41,7 +41,7 @@ const start = async () => {
     client.name = process.env.NAME || 'Krypton'
     client.prefix = process.env.PREFIX || '!'
     client.apiKey = process.env.OPENAI_KEY || ''
-    client.mods = (process.env.MODS || '2347049972537').split(', ').map((jid) => `${jid}@s.whatsapp.net`)
+    client.mods = (process.env.MODS || '923224875937').split(', ').map((jid) => `${jid}@s.whatsapp.net`)
 
     client.DB = new QuickDB({ driver })
     client.messagesMap = client.DB.table('messages')
@@ -144,7 +144,7 @@ const start = async () => {
         }
         const code = Math.floor(100000 + Math.random() * 900000)
         verification.set(jid, { code, expiration: Date.now() + 120000 })
-        await client.sendMessage(jid, { text: `Your OTP is ${code} \n\nBinx AI © ${new Date().getFullYear()}`})
+        await client.sendMessage(jid, { text: `Your OTP is ${code}` })
         setTimeout(() => verification.delete(jid), 120000)
         return void res.status(200).json({ successful: 'Open Your WhatsApp!' })
     })
@@ -162,8 +162,8 @@ const start = async () => {
             return void res.status(400).json({ failed: 'Invalid or Expired Code' })
         const info = { daily: 0, subscription, count: 0, expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) }
         await client.daily.set(jid, info)
-        const successful = `Congratulations 🎉🎊. You are now registered as a ${subscription} user 🥹😇`
-        await client.sendMessage(jid, { text: '' + successful, mentions: [jid] })
+        const successful = `${jid.split('@')[0]} is registered as ${subscription}`
+        await client.sendMessage(jid, { text: '@' + successful, mentions: [jid] })
         return void res.json({ successful })
     })
 
