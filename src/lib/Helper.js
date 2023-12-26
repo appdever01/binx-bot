@@ -16,9 +16,13 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-if user say enable voicenote or reply in voice then return true { "voice": "true" }
+To reply in voicenote or enable voice reply,
+Q: reply using voicenote
+return { "voice": "true" }
 
-if user say disable voicenote or reply in text then return false { "voice": "false" }
+To reply in text or disable voice reply,
+Q: reply using text
+return { "voice": "false" }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
