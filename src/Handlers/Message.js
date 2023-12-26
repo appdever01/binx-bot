@@ -326,6 +326,7 @@ const chatGPT = async (M, client, context, voice = false) => {
       const audio = await createSpeech(client, text);
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
+        console.log(voice)
         return void (await client.sendMessage(
           M.from,
           { audio },
