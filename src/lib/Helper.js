@@ -17,11 +17,11 @@ Note: it'll take country/city
 return { "time": "Pakistan" }
 
 To reply in voicenote or enable voice reply,
-Q: reply using voicenote
+Q: reply using voicenote or use voice to reply me
 return { "voice": "true" }
 
 To reply in text or disable voice reply,
-Q: reply using text
+Q: reply using text or reply to me with text
 return { "voice": "false" }
 
 To Get information related to weather,
