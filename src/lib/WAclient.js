@@ -104,7 +104,7 @@ const serialize = (M, client) => {
             M.quoted.download = () => downloadMedia(M.quoted.message)
         } catch {
             M.quoted = null
-        } 
+        }
         M.body =
             M.message?.conversation ||
             M.message?.[M.type]?.text ||
@@ -125,7 +125,14 @@ const serialize = (M, client) => {
                 M.from,
                 {
                     text,
-                    
+                    contextInfo: {
+                        externalAdReply: {
+                            title: client.name.toUpperCase(),
+                            body: 'Binx Bot ' + new Date().getFullYear(),
+                            thumbnail: readFileSync('./thumbnail.jpg'),
+                            mediaType: 1
+                        }
+                    }
                 },
                 {
                     quoted: M
