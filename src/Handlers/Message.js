@@ -322,7 +322,7 @@ const chatGPT = async (M, client, context, voice = false) => {
     await client.messagesMap.set(M.from, messages);
     helper = "";
     const text = res.content.replace(new RegExp(`^${client.name}: `), "");
-    if (voice) {
+    if (voice == true) {
       const audio = await createSpeech(client, text);
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
