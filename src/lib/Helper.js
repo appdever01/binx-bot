@@ -9,12 +9,14 @@ const exec = promisify(require("child_process").exec);
 const fs = require("fs-extra");
 const path = require("path");
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 4 features (current time, google search, weather, wikipedia details), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 5 features (current time, google search, weather, wikipedia details, voicenote response), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
+
+if user say enable/disable voicenote or voicemode then return true if enable else false { "voice": "true" }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
@@ -41,30 +43,6 @@ For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
 return { "normal": null }`;
 
-const audioMerge = async (audios) => {
-  if (audios.length < 2) return audios[0] || [];
-  try {
-    const directory = "temporary_merge";
-    await fs.ensureDir(directory);
-    audios.forEach(async (buffer, index) => {
-      const filename = path.join(directory, `audio_${index}.mp3`);
-      await fs.writeFile(filename, buffer);
-    });
-    const filename = path.join(tmpdir(), `${Math.random().toString(36)}.mp3`);
-    const files = audios
-      .map((_, index) => `-i ${path.join(directory, `audio_${index}.mp3`)}`)
-      .join(" ");
-    await exec(
-      `ffmpeg ${files} -filter_complex concat=n=${audios.length}:v=0:a=1 -strict -2 ${filename}`
-    );
-    const buffer = await fs.readFile(filename);
-    await Promise.all([fs.unlink(filename), fs.remove(directory)]);
-    return buffer;
-  } catch (error) {
-    console.error(error.message);
-    return [];
-  }
-};
 
 const toSpeech = (text) =>
   googleTTS
@@ -179,5 +157,4 @@ module.exports = {
   google,
   countryTime,
   weather,
-  audioMerge,
 };
