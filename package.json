@@ -1,7 +1,7 @@
 {
-   "name": "krypton",
+   "name": "binx",
    "version": "0.0.1",
-   "description": "krytron based on JavaScript",
+   "description": "binx based on JavaScript",
    "author": "Debanjan-San",
    "main": "src/krypton.js",
    "keywords": [
@@ -29,7 +29,7 @@
       "@shineiichijo/canvas-chan": "^1.0.1",
       "@whiskeysockets/baileys": "^6.4.0",
       "api": "^5.0.8",
-      "audio-slicer": "^1.5.0",
+      "audio-slicer": "^1.1.0",
       "axios": "^1.4.0",
       "better-tord": "^1.3.7",
       "bing-translate-api": "^2.9.0",

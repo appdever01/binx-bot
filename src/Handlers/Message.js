@@ -332,9 +332,11 @@ const chatGPT = async (M, client, context, voice = false) => {
           { quoted: M }
         ));
       }
-    }
-    await M.status("composing");
+    } else {
+        await M.status("composing");
     return void M.reply(text);
+    }
+    console.log(voice)
   } catch (error) {
     console.log(error.message);
     return void (await M.reply(
