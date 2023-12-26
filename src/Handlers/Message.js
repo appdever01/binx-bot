@@ -335,7 +335,7 @@ const chatGPT = async (M, client, context, voice = false) => {
       }
     } else {
         await M.status("composing");
-    return void M.reply(`${text} + ${voice}`);
+    return void M.reply(`${text} + ${typeof voice}`);
     
     }
     
