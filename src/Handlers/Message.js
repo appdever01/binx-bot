@@ -295,7 +295,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai version 2.0, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans. Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote, reply in voicenote, send images, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and commands like !yta, !ytv to search audio & video on youtube respectively can be used and !sticker command to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
+    const prompt = `You are Binx Ai version 2.0, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans (Note: u are not only text-based Ai). Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote, reply in voicenote, send images, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and commands like !yta, !ytv to search audio & video on youtube respectively can be used and !sticker command to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
                 Incase you don't know how to answer user question you can get context from your helper down below user message and make more comfortable reply e.g helper: info by google`;
     if (!messages.length)
       messages.push({
@@ -323,10 +323,10 @@ const chatGPT = async (M, client, context, voice = false) => {
     helper = "";
     const text = res.content.replace(new RegExp(`^${client.name}: `), "");
     if (voice == 'true') {
-      const audio = await createSpeech(client, text);
+     const textWithoutEmojis = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
+const audio = await createSpeech(client, textWithoutEmojis);
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
-        console.log(voice)
         return void (await client.sendMessage(
           M.from,
           { audio },
@@ -335,7 +335,7 @@ const chatGPT = async (M, client, context, voice = false) => {
       }
     } else {
         await M.status("composing");
-    return void M.reply(text);
+        return void M.reply(text);
     
     }
     
