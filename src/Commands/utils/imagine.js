@@ -15,14 +15,16 @@ module.exports = {
         
         try {
             const response = await axios.get(apiUrl);
-            const imageUrl = response.data.imageUrl; 
+            const imageData = response.data.data[0]; // Assuming you want to use the first image in the array
             
-            if (imageUrl) {
+            if (imageData) {
+                const imageUrl = imageData.imageUrl;
+                
                 await client.sendMessage(M.from, {
                     image: {
                         url: imageUrl
                     },
-                    caption: 'Imagination brought to life by Binx!'
+                    caption: 'Imagination brought to life by Binx! 😌💙'
                 });
             } else {
                 return M.reply('Could not generate image based on the provided prompt.');

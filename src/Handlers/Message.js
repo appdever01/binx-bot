@@ -137,6 +137,7 @@ module.exports = async ({ messages }, client) => {
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
     } else if (type.videosearch) {
+      await M.reply("👨🏻‍💻🔎🎥");
         const link = async (term) => {
         const { videos } = await yts(term.trim());
         if (!videos || !videos.length) return null;
@@ -183,8 +184,7 @@ module.exports = async ({ messages }, client) => {
             return M.reply(err.toString());
             client.log(err, 'red');
           });
-
-          await M.reply("👨🏻‍💻🔎🎥");
+          return void M.reply("Binx AI © ${new Date().getFullYear()} 😌💙");
       
     } else if (type.audiosearch) {
       const link = async (term) => {
@@ -233,6 +233,8 @@ module.exports = async ({ messages }, client) => {
           return M.reply(err.toString());
           client.log(err, 'red');
         });
+        return void M.reply("Binx AI © ${new Date().getFullYear()} 😌💙");
+
     } else if (type.lyrics) {
       await M.reply("👨🏻‍💻🔎🎵");
       const data = await client.utils.fetch(
@@ -251,6 +253,7 @@ module.exports = async ({ messages }, client) => {
         { quoted: M }
       ));
     } else if (type.gisearch) {
+      await M.reply("👨🏻‍💻🔎📸");
       const images = await client.utils.fetch(
         `https://weeb-api.vercel.app/gisearch?query=${type.gisearch}`
       );
