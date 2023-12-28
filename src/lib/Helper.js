@@ -9,7 +9,7 @@ const exec = promisify(require("child_process").exec);
 const fs = require("fs-extra");
 const path = require("path");
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 5 features (current time, google search, weather, wikipedia details, voicenote response), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 7 features (current time, google search, weather, wikipedia details, voicenote response, send video, send audio), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
@@ -30,8 +30,12 @@ Note: it'll take country/city
 return { "weather": "Lahore" }
 
 To download or send video
-q: send me video of davido feel music
+Q: send me video of davido feel music
 return { "videosearch": "Davido feel video"}
+
+To download or send music/audio
+Q: send me audio of davido feel or music
+return { "videosearch": "feel by Davido"}
 
 To Get information which you don't know,
 Q: Can you tell about current exchange rate between Pakistan and USA?

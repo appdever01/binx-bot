@@ -137,54 +137,103 @@ module.exports = async ({ messages }, client) => {
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
     } else if (type.videosearch) {
-      await M.reply("👨🏻‍💻🔎🎥");
+        const link = async (term) => {
+        const { videos } = await yts(term.trim());
+        if (!videos || !videos.length) return null;
+          return videos[0].url;
+        };
+
+        const term = await link(type.videosearch);
+        if (!term) return M.reply('Please provide a valid video name 💜');
+
+        const { videoDetails } = await YT.getInfo(term);
+        M.reply('Downloading has started, please wait.');
+
+        let text = `*Title:* ${videoDetails.title} | *Type:* Video | *From:* ${videoDetails.ownerChannelName}`;
+        client.sendMessage(
+          M.from,
+          {
+            image: {
+              url: `https://i.ytimg.com/vi/${videoDetails.videoId}/maxresdefault.jpg`,
+            },
+            caption: text,
+          },
+          {
+            quoted: M,
+          }
+        );
+
+        if (Number(videoDetails.lengthSeconds) > 1800) return M.reply('Cannot download videos longer than 30 minutes');
+
+          const audio = YT.getBuffer(term, 'video')
+            .then(async (res) => {
+              await client.sendMessage(
+                M.from,
+                {
+                  document: res,
+                  mimetype: 'video/mp4',
+                  fileName: videoDetails.title + '.mp4',
+                },
+                {
+                  quoted: M,
+                }
+              );
+          })
+          .catch((err) => {
+            return M.reply(err.toString());
+            client.log(err, 'red');
+          });
+
+          await M.reply("👨🏻‍💻🔎🎥");
+      
+    } else if (type.audiosearch) {
       const link = async (term) => {
-    const { videos } = await yts(term.trim());
-    if (!videos || !videos.length) return null;
-    return videos[0].url;
-  };
+      const { videos } = await yts(term.trim());
+      if (!videos || !videos.length) return null;
+        return videos[0].url;
+      };
 
-  const term = await link(type.videosearch);
-  if (!term) return M.reply('Please use this command with a valid YouTube content link');
+      const term = await link(type.audiosearch);
+      if (!term) return M.reply('Please provide a valid audio name 💜');
 
-  const { videoDetails } = await YT.getInfo(term);
-  M.reply('Downloading has started, please wait.');
+      const { videoDetails } = await YT.getInfo(term);
+      M.reply('Downloading has started, please wait.');
 
-  let text = `*Title:* ${videoDetails.title} | *Type:* Video | *From:* ${videoDetails.ownerChannelName}`;
-  client.sendMessage(
-    M.from,
-    {
-      image: {
-        url: `https://i.ytimg.com/vi/${videoDetails.videoId}/maxresdefault.jpg`,
-      },
-      caption: text,
-    },
-    {
-      quoted: M,
-    }
-  );
-
-  if (Number(videoDetails.lengthSeconds) > 1800) return M.reply('Cannot download videos longer than 30 minutes');
-
-  const audio = YT.getBuffer(term, 'video')
-    .then(async (res) => {
-      await client.sendMessage(
+      let text = `*Title:* ${videoDetails.title} | *Type:* Audio | *From:* ${videoDetails.ownerChannelName}`;
+      client.sendMessage(
         M.from,
         {
-          document: res,
-          mimetype: 'video/mp4',
-          fileName: videoDetails.title + '.mp4',
+          image: {
+            url: `https://i.ytimg.com/vi/${videoDetails.videoId}/maxresdefault.jpg`,
+          },
+          caption: text,
         },
         {
           quoted: M,
         }
       );
-    })
-    .catch((err) => {
-      return M.reply(err.toString());
-      client.log(err, 'red');
-    });
-    }else if (type.lyrics) {
+
+      if (Number(videoDetails.lengthSeconds) > 1800) return M.reply('Cannot download audio longer than 30 minutes');
+
+      const audio = YT.getBuffer(term, 'audio')
+        .then(async (res) => {
+          await client.sendMessage(
+            M.from,
+            {
+              document: res,
+              mimetype: 'audio/mpeg',
+              fileName: videoDetails.title + '.mp3',
+            },
+            {
+              quoted: M,
+            }
+          );
+        })
+        .catch((err) => {
+          return M.reply(err.toString());
+          client.log(err, 'red');
+        });
+    } else if (type.lyrics) {
       await M.reply("👨🏻‍💻🔎🎵");
       const data = await client.utils.fetch(
         `https://weeb-api.vercel.app/genius?query=${type.lyrics}`
@@ -324,7 +373,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai version 2.0, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans (Note: u are not only text-based Ai). Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote, reply in voicenote, send images, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and commands like !yta, !ytv to search audio & video on youtube respectively can be used and !sticker command to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
+    const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans (Note: u are not only text-based Ai). Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote, reply in voicenote, send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and !sticker command can be use to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact or make feedback Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
                 Incase you don't know how to answer user question you can get context from your helper down below user message and make more comfortable reply e.g helper: info by google`;
     if (!messages.length)
       messages.push({
