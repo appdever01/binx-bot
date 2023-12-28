@@ -21,7 +21,7 @@ Q: reply using voicenote or use voice to reply me
 return { "voice": "true" }
 
 To reply in text or write or disable voice reply,
-Q: reply using text or reply to me with text or write
+Q: reply using text or reply to me with text write
 return { "voice": "false" }
 
 To Get information related to weather,
@@ -38,8 +38,8 @@ Q: send me audio of davido feel or music
 return { "audiosearch": "feel by Davido"}
 
 To Get information which you don't know,
-Q: Can you tell about current exchange rate between Pakistan and USA?
-return { "google": "current exchange rate between Pakistan and USA" }
+Q: Can you tell about current exchange rate between naira and dollar?
+return { "google": "current exchange rate between niara and dollar" }
 
 To get deep details of a word, character, specific personality, person, queen, players
 Q: Can you give me details of Langchain?
@@ -49,7 +49,7 @@ To get lyrics of any song with artist name,
 Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
 
-To generate AI image or pictures
+To generate AI image or pictures but not self ai image 
 Q: help me generate ai image of elon musk? 
 return: { "imaginesearch": "elon musk" }
 
