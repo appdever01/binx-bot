@@ -33,9 +33,9 @@ To download or send video
 Q: send me video of davido feel music
 return { "videosearch": "Davido feel video"}
 
-To download or send music/audio
+To download or send music/audio or song
 Q: send me audio of davido feel or music
-return { "videosearch": "feel by Davido"}
+return { "audiosearch": "feel by Davido"}
 
 To Get information which you don't know,
 Q: Can you tell about current exchange rate between Pakistan and USA?
