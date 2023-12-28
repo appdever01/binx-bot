@@ -18,11 +18,11 @@ return { "time": "Pakistan" }
 
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me
-return { "voice": "true" }
+return { "voice": true }
 
-To reply in text or disable voice reply,
-Q: reply using text or reply to me with text
-return { "voice": "false" }
+To reply in text or write or disable voice reply,
+Q: reply using text or reply to me with text or write
+return { "voice": false }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
@@ -103,7 +103,7 @@ const wikipedia = async (query) => {
   if (!results.length) return "Cannot find related Info.";
   const result = await summary(results[0].title);
   const { title, description, content_urls, extract } = result;
-  const text = `Title: ${title}, Description: ${description}, URL: ${content_urls.desktop.page}, Summary Info: ${extract}`;
+  const text = `Title: ${title}, Description: ${description}, Summary Info: ${extract}`;
   return text;
 };
 
@@ -114,7 +114,7 @@ const google = async (query) => {
   let text = "";
   for (let i = 0; i < Math.min(results.length, 10); i++) {
     const { link, snippet, title } = results[i];
-    text += `Title: ${title}, Snippet: ${snippet}, Link: ${link}\n`;
+    text += `Title: ${title}, Snippet: ${snippet}\n`;
   }
   return text;
 };

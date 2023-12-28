@@ -112,7 +112,7 @@ module.exports = async ({ messages }, client) => {
         return void (await chatGPT(M, client, text));
       }
       const result = await transcribe(await M.download(), client);
-      return void (await chatGPT(M, client, result));
+      return void (await chatGPT(M, client, result,v));
     }
     if (!body) return void null;
     let result = await ChatGPTHelper(client.apiKey, body);
@@ -192,7 +192,7 @@ module.exports = async ({ messages }, client) => {
   if (!client.isAdmin && command.category === "moderation")
     return void M.reply("This command can only be used when bot is admin");
   if (!isGroup && command.category === "moderation")
-    return void M.reply("This command is ment to use in groups");
+    return void M.reply("This command is meant to use in groups");
   if (!client.mods.includes(sender) && command.category === "dev")
     return void M.reply("This command only can be accessed by the mods");
   try {
@@ -233,27 +233,6 @@ const moderate = async (M, client, admins, body) => {
   }
 };
 
-// const experience = async (M, client, command) => {
-//     await client.exp.add(M.sender, command.exp || 10)
-//     const level = (await client.DB.get(`${M.sender}_LEVEL`)) || 0
-//     const experience = await client.exp.get(M.sender)
-//     const { requiredXpToLevelUp } = getStats(level)
-//     if (requiredXpToLevelUp > experience) return null
-//     await client.DB.add(`${M.sender}_LEVEL`, 1)
-//     client.sendMessage(
-//         M.from,
-//         {
-//             video: {
-//                 url: 'https://media.tenor.com/msfmevhmlDAAAAPo/anime-chibi.mp4'
-//             },
-//             caption: `Congratulations you leveled up from *${level} ---> ${level + 1}* 🎊`,
-//             gifPlayback: true
-//         },
-//         {
-//             quoted: M
-//         }
-//     )
-// }
 
 const createSpeech = async (client, text) => {
   const audios = await toSpeech(text);
@@ -322,9 +301,8 @@ const chatGPT = async (M, client, context, voice = false) => {
     await client.messagesMap.set(M.from, messages);
     helper = "";
     const text = res.content.replace(new RegExp(`^${client.name}: `), "");
-    if (voice == 'true') {
+    if (voice == true) {
      const textWithoutEmojis = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
-const audio = await createSpeech(client, textWithoutEmojis);
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
         return void (await client.sendMessage(
