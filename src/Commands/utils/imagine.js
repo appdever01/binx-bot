@@ -10,7 +10,7 @@ module.exports = {
     async execute(client, flag, arg, M) {
         if (!arg) return M.reply('Sorry, you did not provide any imagination prompt!');
         
-        const prompt = encodeURIComponent(arg);
+        const prompt = arg;
         const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt={prompt}`; 
         
         try {
