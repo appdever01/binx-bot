@@ -112,7 +112,7 @@ module.exports = async ({ messages }, client) => {
         return void (await chatGPT(M, client, text));
       }
       const result = await transcribe(await M.download(), client);
-      return void (await chatGPT(M, client, result, "true"));
+      return void (await chatGPT(M, client, result, info?.voice));
     }
     if (!body) return void null;
     let result = await ChatGPTHelper(client.apiKey, body);
