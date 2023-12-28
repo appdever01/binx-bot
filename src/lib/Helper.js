@@ -18,11 +18,11 @@ return { "time": "Pakistan" }
 
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me
-return { "voice": true }
+return { "voice": "true" }
 
 To reply in text or write or disable voice reply,
 Q: reply using text or reply to me with text or write
-return { "voice": false }
+return { "voice": "false" }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
