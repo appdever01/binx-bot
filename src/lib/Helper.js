@@ -28,7 +28,7 @@ Q: reply using text or reply to me with text write
 return { "voice": "false" }
 
 To type or write,
-Q: write something or type something
+Q: write a letter or write 
 return { "voice": "false" }
 
 To Get information related to weather,
