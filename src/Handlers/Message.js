@@ -184,7 +184,7 @@ module.exports = async ({ messages }, client) => {
             return M.reply(err.toString());
             client.log(err, 'red');
           });
-          return void M.reply("Binx AI © ${new Date().getFullYear()} 😌💙");
+          return true;
       
     } else if (type.audiosearch) {
       const link = async (term) => {
@@ -233,9 +233,36 @@ module.exports = async ({ messages }, client) => {
           return M.reply(err.toString());
           client.log(err, 'red');
         });
-        return void M.reply("Binx AI © ${new Date().getFullYear()} 😌💙");
+        return true;
 
-    } else if (type.lyrics) {
+    } else if (type.imaginesearch) {
+        const prompt = encodeURIComponent(arg);
+        const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt=${type.imaginesearch}`; 
+        
+        try {
+            const response = await axios.get(apiUrl);
+            const imageData = response.data.data[0]; // Assuming you want to use the first image in the array
+            
+            if (imageData) {
+                const imageUrl = imageData.imageUrl;
+                
+                await client.sendMessage(M.from, {
+                    image: {
+                        url: imageUrl
+                    },
+                    caption: 'Imagination brought to life by Binx! 😌💙🔥'
+                });
+            } else {
+                return M.reply('Could not generate image based on the provided prompt.');
+            }
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            return M.reply('Could not generate image based on the provided prompt.');
+        }
+  
+
+    } 
+    else if (type.lyrics) {
       await M.reply("👨🏻‍💻🔎🎵");
       const data = await client.utils.fetch(
         `https://weeb-api.vercel.app/genius?query=${type.lyrics}`
@@ -376,7 +403,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans (Note: u are not only text-based Ai). Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote, reply in voicenote, send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and !sticker command can be use to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact or make feedback Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
+    const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌, your goal is to have engaging and mutual conversations with humans (Note: u are not only text-based Ai). Use emojis and curious expressions to maintain a friendly conversation. You can listen to voicenote,  reply in voicenote, generate ai images but cant generate video send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features,ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright. Always reply with emoji, and !sticker command can be use to convert image to sticker, the prefix ! is important for commands. You are not related to OpenAI or GPT, and users can contact or make feedback Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),
                 Incase you don't know how to answer user question you can get context from your helper down below user message and make more comfortable reply e.g helper: info by google`;
     if (!messages.length)
       messages.push({

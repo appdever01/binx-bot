@@ -49,9 +49,13 @@ To get lyrics of any song with artist name,
 Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
 
-to get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
+To generate AI image or pictures
+Q: help me generate ai image of elon musk? 
+return: { "imaginesearch": "elon musk" }
+
+To get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
 Q: Can you send me a picture, image or wallpaper ? 
-Return: { "gisearch": "image name" }
+return: { "gisearch": "image name" }
 
 For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
