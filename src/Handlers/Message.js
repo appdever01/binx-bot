@@ -302,7 +302,7 @@ const chatGPT = async (M, client, context, voice = false) => {
     helper = "";
     const text = res.content.replace(new RegExp(`^${client.name}: `), "");
     if (voice == 'true') {
-     const textWithoutEmojis = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
+     const audio = await createSpeech(client, emojis(text))
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
         return void (await client.sendMessage(
