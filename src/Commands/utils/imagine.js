@@ -17,12 +17,16 @@ module.exports = {
             const response = await axios.get(apiUrl);
             const imageUrl = response.data.imageUrl; 
             
-            await client.sendMessage(M.from, {
-                image: {
-                    url: imageUrl
-                },
-                caption: 'Imagination brought to life by Binx!'
-            });
+            if (imageUrl) {
+                await client.sendMessage(M.from, {
+                    image: {
+                        url: imageUrl
+                    },
+                    caption: 'Imagination brought to life by Binx!'
+                });
+            } else {
+                return M.reply('Could not generate image based on the provided prompt.');
+            }
         } catch (error) {
             console.error('Error fetching image:', error);
             return M.reply('Could not generate image based on the provided prompt.');
