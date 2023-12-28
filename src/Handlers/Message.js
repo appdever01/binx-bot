@@ -372,7 +372,7 @@ const moderate = async (M, client, admins, body) => {
 
 
 const createSpeech = async (client, text) => {
-  const audios = await toSpeech(text);
+  const audios = await toSpeech(text,type.lang);
   if (!audios.length) return "Unable to make long text as audio";
   const audio = await audioMerge(audios);
   const buffer = await client.utils.mp3ToOpus(audio);

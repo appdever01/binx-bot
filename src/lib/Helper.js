@@ -17,11 +17,18 @@ Note: it'll take country/city
 return { "time": "Pakistan" }
 
 To reply in voicenote or enable voice reply,
-Q: reply using voicenote or use voice to reply me
+Q: reply using voicenote or use voice to reply me or reply in male/female voice
 return { "voice": "true" }
+
+e.g if response is in arabic or other languages
+return { "lang": "language_code e.g ar"}
 
 To reply in text or write or disable voice reply,
 Q: reply using text or reply to me with text write
+return { "voice": "false" }
+
+To type or write,
+Q: write something or type something
 return { "voice": "false" }
 
 To Get information related to weather,
@@ -62,10 +69,10 @@ Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
 return { "normal": null }`;
 
 
-const toSpeech = (text) =>
+const toSpeech = (text, lang) =>
   googleTTS
     .getAllAudioBase64(text, {
-      lang: "en",
+      lang: lang,
       slow: false,
       host: "https://translate.google.com",
       timeout: 10000,
