@@ -267,7 +267,7 @@ const ChatGPTHelper = async (apiKey, context) => {
   }
 };
 
-const chatGPT = async (M, client, context, voice = "false") => {
+const chatGPT = async (M, client, context, voice = false) => {
   const { apiKey } = client;
   if (!apiKey) return null;
   const ai = new OpenAIApi(new Configuration({ apiKey }));
@@ -301,7 +301,7 @@ const chatGPT = async (M, client, context, voice = "false") => {
     await client.messagesMap.set(M.from, messages);
     helper = "";
     const text = res.content.replace(new RegExp(`^${client.name}: `), "");
-    if (voice == "true") {
+    if (voice == 'true') {
      const textWithoutEmojis = text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
       if (Buffer.isBuffer(audio)) {
         await M.status("recording");
