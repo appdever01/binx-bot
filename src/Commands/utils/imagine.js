@@ -11,13 +11,13 @@ module.exports = {
         if (!arg) return M.reply('Sorry, you did not provide any imagination prompt!');
         
         const prompt = encodeURIComponent(arg);
-        const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt={prompt}`; 
+        const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt=${prompt}`; 
         
         try {
             const response = await axios.get(apiUrl);
             const imageUrl = response.data.imageUrl; 
             
-             client.sendMessage(M.from, {
+            await client.sendMessage(M.from, {
                 image: {
                     url: imageUrl
                 },
