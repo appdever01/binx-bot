@@ -27,10 +27,6 @@ To reply in text or write or disable voice reply,
 Q: reply using text or reply to me with text write
 return { "voice": "false" }
 
-To type or write,
-Q: write a letter or write 
-return { "voice": "false" }
-
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
