@@ -236,30 +236,37 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        const prompt = encodeURIComponent(arg);
         const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt=${type.imaginesearch}`; 
         
         try {
             const response = await axios.get(apiUrl);
-            const imageData = response.data.data[0]; // Assuming you want to use the first image in the array
+            const imageData = response.data.data; // Get all the image data
             
-            if (imageData) {
-                const imageUrl = imageData.imageUrl;
+            if (imageData && imageData.length >= 2) {
+                const imageUrl1 = imageData[0].imageUrl;
+                const imageUrl2 = imageData[1].imageUrl;
                 
                 await client.sendMessage(M.from, {
                     image: {
-                        url: imageUrl
+                        url: imageUrl1
                     },
                     caption: 'Imagination brought to life by Binx! 😌💙🔥'
                 });
+                
+                await client.sendMessage(M.from, {
+                    image: {
+                        url: imageUrl2
+                    },
+                    caption: 'Another imagination brought to life by Binx! 😌💙🔥'
+                });
             } else {
-                return M.reply('Could not generate image based on the provided prompt.');
+                return M.reply('Could not generate enough images based on the provided prompt.');
             }
         } catch (error) {
-            console.error('Error fetching image:', error);
-            return M.reply('Could not generate image based on the provided prompt.');
+            console.error('Error fetching images:', error);
+            return M.reply('Could not generate images based on the provided prompt.');
         }
-  
+        return true;
 
     } 
     else if (type.lyrics) {
