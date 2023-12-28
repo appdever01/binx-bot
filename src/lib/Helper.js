@@ -29,6 +29,10 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
+To download or send video
+q: send me video of davido feel music
+return { "videosearch": "Davido feel video"}
+
 To Get information which you don't know,
 Q: Can you tell about current exchange rate between Pakistan and USA?
 return { "google": "current exchange rate between Pakistan and USA" }
@@ -153,6 +157,8 @@ Weather Description: ${weatherDescription}
     return "Unable To Find Country/City";
   }
 };
+
+
 
 module.exports = {
   ChatGPTHelperPrompt,
