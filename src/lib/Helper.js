@@ -20,8 +20,8 @@ To reply in text or disable voicemode,
 Q: write about something or reply in text
 return { "voice": "false" }
 
-To write or need written response,
-Q: write about something or write ...
+To write or give a written response,
+Q: help me write pickup line or write about nigeria
 return { "voice": "false" }
 
 To reply in voicenote or enable voice reply,
