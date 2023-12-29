@@ -16,8 +16,8 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-To type or write something,
-Q: write a letter or write a pickup line
+To type or write something or user requesting for written response,
+Q: write a letter or write something
 return { "voice": "false" }
 
 To reply in voicenote or enable voice reply,
