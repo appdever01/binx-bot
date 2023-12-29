@@ -16,20 +16,18 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
+To type or write something,
+Q: write a letter or write a pickup line
+return { "voice": "false" }
+
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me or reply in male/female voice
 return { "voice": "true" }
 
-e.g if response is in arabic or other languages
-return { "lang": "language_code e.g ar"}
-
 To reply in text or write or disable voice reply,
-Q: reply using text or reply to me with text write
+Q: reply using text or reply to me with text 
 return { "voice": "false" }
 
-To type or write,
-Q: write a letter or write 
-return { "voice": "false" }
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
@@ -69,7 +67,7 @@ Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
 return { "normal": null }`;
 
 
-const toSpeech = (text, lang) =>
+const toSpeech = (text) =>
   googleTTS
     .getAllAudioBase64(text, {
       lang: lang,
