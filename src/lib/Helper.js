@@ -20,6 +20,9 @@ To reply in text or disable voicemode,
 Q: write about something or reply in text
 return { "voice": "false" }
 
+To write,
+Q: write about something
+return { "voice": "false" }
 
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me or reply in male/female voice
