@@ -20,10 +20,9 @@ const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
 let helper = "";
 
-
+var type = "";
 module.exports = async ({ messages }, client) => {
   const M = serialize(messages[0], client);
-  var type = ''
   if (
     !M.message ||
     ["protocolMessage", "senderKeyDistributionMessage"].includes(M.type) ||
@@ -122,7 +121,7 @@ module.exports = async ({ messages }, client) => {
     if (!body) return void null;
     let result = await ChatGPTHelper(client.apiKey, body);
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
-   type = JSON.parse(result);
+    const type = JSON.parse(result);
     if (type.google) {
       helper = await google(type.google);
       await M.reply("👨🏻‍💻🔎🌐");
