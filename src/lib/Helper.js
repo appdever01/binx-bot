@@ -70,7 +70,7 @@ return { "normal": null }`;
 const toSpeech = (text) =>
   googleTTS
     .getAllAudioBase64(text, {
-      lang: lang,
+      lang: 'en',
       slow: false,
       host: "https://translate.google.com",
       timeout: 10000,
