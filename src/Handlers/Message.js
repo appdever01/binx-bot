@@ -81,6 +81,11 @@ module.exports = async ({ messages }, client) => {
       );
     }
     
+
+    if (Keys.includes(M.type)) {
+      const message = complement(M.type);
+      return void M.reply(message);
+    }
     info.count = info.count + 1;
     await client.daily.set(M.sender, info);
     if (M.type === "audioMessage") {
@@ -120,10 +125,7 @@ module.exports = async ({ messages }, client) => {
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
 
-    if (Keys.includes(M.type)) {
-      const message = complement(M.type);
-      return void M.reply(message);
-    }
+    
     
     if (type.google) {
       helper = await google(type.google);
