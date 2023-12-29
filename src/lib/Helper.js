@@ -20,7 +20,7 @@ To reply in text or disable voicemode,
 Q: write about something or reply in text
 return { "voice": "false" }
 
-To write or give a written response return { "voice": "false" },
+if user say 'write' or 'type' return { "voice": "false" },
 e.g Q: help me write pickup line or write about nigeria
 return { "voice": "false" }
 
