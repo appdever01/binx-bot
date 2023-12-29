@@ -271,7 +271,7 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.dosticker) {
-      flag.forEach((el) => (arg = arg.replace(el, "")));
+      
     if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
     const pack = arg.split("|");
