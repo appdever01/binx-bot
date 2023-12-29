@@ -79,10 +79,7 @@ module.exports = async ({ messages }, client) => {
         "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥"
       );
     }
-    if (Keys.includes(M.type)) {
-      const message = complement(M.type);
-      return void M.reply(message);
-    }
+    
     info.count = info.count + 1;
     await client.daily.set(M.sender, info);
     if (M.type === "audioMessage") {
@@ -121,6 +118,10 @@ module.exports = async ({ messages }, client) => {
     let result = await ChatGPTHelper(client.apiKey, body);
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
+    if (Keys.includes(M.type) && !type.dosticker) {
+      const message = complement(M.type);
+      return void M.reply(message);
+    }
     if (type.google) {
       helper = await google(type.google);
       await M.reply("👨🏻‍💻🔎🌐");
@@ -269,7 +270,7 @@ module.exports = async ({ messages }, client) => {
         }
         return true;
 
-    } else if (dosticker) {
+    } else if (type.dosticker) {
       flag.forEach((el) => (arg = arg.replace(el, "")));
     if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
