@@ -9,7 +9,7 @@ const exec = promisify(require("child_process").exec);
 const fs = require("fs-extra");
 const path = require("path");
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 7 features (current time, google search, weather, wikipedia details, voicenote response, write ,send video, send audio), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 8 features (current time, google search, weather, wikipedia details, voicenote response, write ,send video, send audio), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
