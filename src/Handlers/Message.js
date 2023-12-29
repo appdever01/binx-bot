@@ -271,24 +271,15 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.dosticker) {
-      
-    if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
+      if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
-    const pack = arg.split("|");
     const buffer = M.quoted ? await M.quoted.download() : await M.download();
     const sticker = await new Sticker(buffer, {
-      pack: pack[1]?.trim() || "Crafted by",
-      author: pack[2]?.trim() || "Binx AI 🔥",
+      pack: "Crafted by",
+      author: "Binx AI 🔥",
       categories: ["🤩", "🎉"],
       quality: 70,
-      type:
-        flag.includes("--c") || flag.includes("--crop")
-          ? "crop"
-          : flag.includes("--s") || flag.includes("--stretch")
-          ? "default"
-          : flag.includes("--circle")
-          ? "circle"
-          : "full",
+      type: "full",
     }).build();
     await client.sendMessage(M.from, { sticker }, { quoted: M });
     }
