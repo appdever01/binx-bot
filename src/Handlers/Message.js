@@ -84,7 +84,7 @@ module.exports = async ({ messages }, client) => {
     let result = await ChatGPTHelper(client.apiKey, body);
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
-    if (Keys.includes(M.type)) {
+    if (Keys.includes(M.type) && !type.dosticker) {
       const message = complement(M.type);
       return void M.reply(message);
     }
