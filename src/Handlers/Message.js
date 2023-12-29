@@ -10,6 +10,7 @@ const {
 const YT = require('../lib/YT')
 const axios = require('axios')
 const yts = require('yt-search')
+const { Sticker } = require("wa-sticker-formatter");
 const { Keys, complement } = require("../lib/Messages");
 const { serialize, decodeJid } = require("../lib/WAclient");
 const { getStats } = require("../lib/stats");
