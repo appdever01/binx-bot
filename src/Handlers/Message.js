@@ -120,7 +120,7 @@ module.exports = async ({ messages }, client) => {
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
 
-    if (Keys.includes(M.type) && type.dosticker) {
+    if (Keys.includes(M.type)) {
       const message = complement(M.type);
       return void M.reply(message);
     }
