@@ -16,18 +16,13 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-To type or write something or user requesting for written response,
-Q: write a letter or write something
+To write or type or reply in text or disable voicemode,
+Q: write about something or reply in text
 return { "voice": "false" }
 
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me or reply in male/female voice
 return { "voice": "true" }
-
-To reply in text or write or disable voice reply,
-Q: reply using text or reply to me with text 
-return { "voice": "false" }
-
 
 To Get information related to weather,
 Q: Can you tell info about today weather in Lahore?
