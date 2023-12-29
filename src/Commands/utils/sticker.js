@@ -15,7 +15,7 @@ module.exports = {
     const buffer = M.quoted ? await M.quoted.download() : await M.download();
     const sticker = await new Sticker(buffer, {
       pack: pack[1]?.trim() || "Crafted by",
-      author: pack[2]?.trim() || "Binx AI 🌚",
+      author: pack[2]?.trim() || "Binx AI 🔥",
       categories: ["🤩", "🎉"],
       quality: 70,
       type:

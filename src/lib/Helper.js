@@ -33,13 +33,17 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To download or send video
+To download or send video or mp4
 Q: send me video of davido feel music
 return { "videosearch": "Davido feel video"}
 
 To download or send music/audio or song
 Q: send me audio of davido feel or music
 return { "audiosearch": "feel by Davido"}
+
+To turn/convert image to sticker
+Q: turn this image to sicker
+return { "dosticker": true}
 
 To Get information which you don't know,
 Q: Can you tell about current exchange rate between naira and dollar?
