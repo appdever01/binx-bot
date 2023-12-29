@@ -81,7 +81,9 @@ module.exports = async ({ messages }, client) => {
       );
     }
     
-
+    let result = await ChatGPTHelper(client.apiKey, body);
+    if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
+    const type = JSON.parse(result);
     if (Keys.includes(M.type)) {
       const message = complement(M.type);
       return void M.reply(message);
@@ -121,9 +123,7 @@ module.exports = async ({ messages }, client) => {
       return void (await chatGPT(M, client, result, info?.voice));
     }
     if (!body) return void null;
-    let result = await ChatGPTHelper(client.apiKey, body);
-    if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
-    const type = JSON.parse(result);
+    
 
     
     
