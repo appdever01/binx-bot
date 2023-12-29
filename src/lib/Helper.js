@@ -16,9 +16,10 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-To write or type or reply in text or disable voicemode,
+To reply in text or disable voicemode,
 Q: write about something or reply in text
 return { "voice": "false" }
+
 
 To reply in voicenote or enable voice reply,
 Q: reply using voicenote or use voice to reply me or reply in male/female voice
