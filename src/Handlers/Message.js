@@ -119,10 +119,7 @@ module.exports = async ({ messages }, client) => {
     let result = await ChatGPTHelper(client.apiKey, body);
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
-    if (Keys.includes(M.type) && !type.dosticker) {
-      const message = complement(M.type);
-      return void M.reply(message);
-    }
+    
     if (type.google) {
       helper = await google(type.google);
       await M.reply("👨🏻‍💻🔎🌐");
@@ -274,16 +271,16 @@ module.exports = async ({ messages }, client) => {
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
-    const buffer = M.quoted ? await M.quoted.download() : await M.download();
-    const sticker = await new Sticker(buffer, {
-      pack: "Crafted by",
-      author: "Binx AI 🔥",
-      categories: ["🤩", "🎉"],
-      quality: 70,
-      type: "full",
-    }).build();
-    await client.sendMessage(M.from, { sticker }, { quoted: M });
-    return true;
+      const buffer = M.quoted ? await M.quoted.download() : await M.download();
+      const sticker = await new Sticker(buffer, {
+        pack: "Crafted by",
+        author: "Binx AI 🔥",
+        categories: ["🤩", "🎉"],
+        quality: 70,
+        type: "full",
+      }).build();
+      await client.sendMessage(M.from, { sticker }, { quoted: M });
+      return void (await client.sendMessage(M.from, { sticker }, { quoted: M }));
     }
     else if (type.lyrics) {
       await M.reply("👨🏻‍💻🔎🎵");
@@ -302,6 +299,9 @@ module.exports = async ({ messages }, client) => {
         { image, caption },
         { quoted: M }
       ));
+    } else if (Keys.includes(M.type) && !type.dosticker) {
+      const message = complement(M.type);
+      return void M.reply(message);
     } else if (type.gisearch) {
       await M.reply("👨🏻‍💻🔎📸");
       const images = await client.utils.fetch(
