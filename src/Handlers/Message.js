@@ -279,7 +279,6 @@ module.exports = async ({ messages }, client) => {
         quality: 70,
         type: "full",
       }).build();
-      await client.sendMessage(M.from, { sticker }, { quoted: M });
       return void (await client.sendMessage(M.from, { sticker }, { quoted: M }));
     }
     else if (type.lyrics) {
@@ -299,7 +298,7 @@ module.exports = async ({ messages }, client) => {
         { image, caption },
         { quoted: M }
       ));
-    } else if (Keys.includes(M.type) && !type.dosticker) {
+    } else if (Keys.includes(M.type)) {
       const message = complement(M.type);
       return void M.reply(message);
     } else if (type.gisearch) {
