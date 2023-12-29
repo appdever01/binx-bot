@@ -9,7 +9,7 @@ const exec = promisify(require("child_process").exec);
 const fs = require("fs-extra");
 const path = require("path");
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 7 features (current time, google search, weather, wikipedia details, voicenote response, send video, send audio), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 7 features (current time, google search, weather, wikipedia details, voicenote response, write ,send video, send audio), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
@@ -20,8 +20,8 @@ To reply in text or disable voicemode,
 Q: write about something or reply in text
 return { "voice": "false" }
 
-To write,
-Q: write about something
+To write or need written response,
+Q: write about something or write ...
 return { "voice": "false" }
 
 To reply in voicenote or enable voice reply,
