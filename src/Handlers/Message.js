@@ -246,7 +246,7 @@ module.exports = async ({ messages }, client) => {
         const apiUrl = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
-        const prompt = 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ';
+        const prompt = type.imaginesearch;
 
         try {
           const response = await axios.post(apiUrl, null, {
@@ -261,7 +261,7 @@ module.exports = async ({ messages }, client) => {
               steps: 30,
               sampler: 'dpmpp_2m_karras',
               model: 'dreamshaper_8',
-              negative_prompt: type.imaginesearch,
+              negative_prompt: 'ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, extra limbs, disfigured, deformed, body out of frame, blurry, bad anatomy, blurred, watermark, grainy, signature, cut off, draft',
               upscale: 1,
               format: 'png',
               guidance: 7
