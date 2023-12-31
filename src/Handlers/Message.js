@@ -287,8 +287,8 @@ module.exports = async ({ messages }, client) => {
             });
 
             // Delete the file after sending
-            fs.unlinkSync(imagePath);
-            console.log('File deleted successfully:', imagePath);
+            // fs.unlinkSync(imagePath);
+            // console.log('File deleted successfully:', imagePath);
           })
           .catch(error => {
             console.error(error);
