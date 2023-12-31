@@ -22,10 +22,11 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
-const Mega = require('mega-api');
+const Mega = require('megajs');
 
 // Create a new instance of Mega
-const mega = new Mega();
+const mega = Mega({ email: 'appdever01@.com', password: 'Naheem123$' });
+
 let helper = "";
 
 module.exports = async ({ messages }, client) => {
@@ -285,10 +286,8 @@ module.exports = async ({ messages }, client) => {
           fs.writeFileSync(imagePath, imageBuffer, 'binary');
 
           // Upload the image to Mega
-          const mega = new Mega();
-          await mega.login('appdever01@gmail.com', 'Naheem123$');
-          const file = await mega.upload(imagePath);
-          const fileUrl = mega.getFileLink(file);
+          const file = await mega.upload({ name: filename, path: imagePath });
+          const fileUrl = mega.exportURL(file);
           console.log('Uploaded file URL:', fileUrl);
 
           // Send the Mega file URL as a message
