@@ -281,7 +281,7 @@ module.exports = async ({ messages }, client) => {
 
             await client.sendMessage(M.from, {
               image: {
-                url: `file://${imagePath}`
+                url: `${imagePath}`
               },
               caption: 'Imagination brought to life by Binx! 😌💙🔥'
             });
