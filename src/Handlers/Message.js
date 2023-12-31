@@ -244,25 +244,12 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
+        async function uploadImageToMega() {
         const url = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
         const form = new FormData();
-        form.append('lora2_strength', '.7');
-        form.append('lora2', '');
-        form.append('lora1_strength', '.7');
-        form.append('prompt', 'elon musk');
-        form.append('width', '');
-        form.append('height', '');
-        form.append('steps', '30');
-        form.append('sampler', 'dpmpp_2m_karras');
-        form.append('model', 'dreamshaper_8');
-        form.append('negative_prompt', '');
-        form.append('upscale', '1');
-        form.append('seed', '');
-        form.append('format', 'png');
-        form.append('guidance', '7');
-        form.append('lora1', '');
+        // ... rest of the code ...
 
         const headers = {
           'accept': '/',
@@ -271,38 +258,43 @@ module.exports = async ({ messages }, client) => {
           responseType: 'arraybuffer', 
         };
 
-        axios.post(url, form, { headers })
-          .then(async response => {
+        try {
+          const response = await axios.post(url, form, { headers });
+          const imageBuffer = Buffer.from(response.data, 'binary');
+          const filename = response.headers['x-filename'];
+          const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
-            const imageBuffer = Buffer.from(response.data, 'binary');
-            const filename = response.headers['x-filename'];
-            console.error(filename);
-    const imagePath = '/root/binx-bot/src/Handlers/' + filename; // Adjust the path as needed
+          fs.writeFileSync(imagePath, imageBuffer, 'binary');
 
-    fs.writeFileSync(imagePath, imageBuffer, 'binary');
+          // Upload the image to Mega
+          const mega = new Mega();
+          await mega.login('appdever01@gmail.com', 'Naheem123$');
+          const file = await mega.upload(imagePath);
+          const fileUrl = mega.getFileLink(file);
+          console.log('Uploaded file URL:', fileUrl);
 
-    await client.sendMessage(
-      M.from,
-      {
-        document: fs.readFileSync(imagePath),
-        mimetype: 'image/png',
-        fileName: filename,
-      },
-      {
-        quoted: M,
-      }
-    );
-
-            // Delete the file after sending
-            // fs.unlinkSync(imagePath);
-            // console.log('File deleted successfully:', imagePath);
-          })
-          .catch(error => {
-            console.error(error);
-            return M.reply('Could not generate images based on the provided prompt.');
+          // Send the Mega file URL as a message
+          await client.sendMessage(M.from, {
+            image: {
+              url: fileUrl
+            },
+            caption: 'Imagination brought to life by Binx! 😌💙🔥'
           });
 
+          // Delete the local file after sending
+          fs.unlinkSync(imagePath);
+          console.log('File deleted successfully:', imagePath);
+
           return true;
+        } catch (error) {
+          console.error(error);
+          return M.reply('Could not upload the image to Mega.');
+        }
+      }
+
+      // Call the function to upload the image to Mega
+      uploadImageToMega();
+      return true;
           
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
