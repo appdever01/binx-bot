@@ -241,37 +241,47 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        const apiUrl = `https://timeless.cyclic.app/api/image/imagine?prompt=${type.imaginesearch}`; 
-        
+        const axios = require('axios');
+
+        const apiUrl = 'https://api.dezgo.com/text2image';
+        const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+
+        const prompt = 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ';
+
         try {
-            const response = await axios.get(apiUrl);
-            const imageData = response.data.data; // Get all the image data
-            
-            if (imageData && imageData.length >= 2) {
-                const imageUrl1 = imageData[0].imageUrl;
-                const imageUrl2 = imageData[1].imageUrl;
-                
-                await client.sendMessage(M.from, {
-                    image: {
-                        url: imageUrl1
-                    },
-                    caption: 'Imagination brought to life by Binx! 😌💙🔥'
-                });
-                
-                await client.sendMessage(M.from, {
-                    image: {
-                        url: imageUrl2
-                    },
-                    caption: 'Another imagination brought to life by Binx! 😌💙🔥'
-                });
-            } else {
-                return M.reply('Could not generate enough images based on the provided prompt.');
+          const response = await axios.post(apiUrl, null, {
+            headers: {
+              'X-Dezgo-Key': apiKey,
+              'Content-Type': 'multipart/form-data'
+            },
+            params: {
+              prompt,
+              width: 560,
+              height: 560,
+              steps: 30,
+              sampler: 'dpmpp_2m_karras',
+              model: 'dreamshaper_8',
+              negative_prompt: type.imaginesearch,
+              upscale: 1,
+              format: 'png',
+              guidance: 7
             }
+          });
+
+          const imageUrl = response.headers['x-filename'];
+
+          await client.sendMessage(M.from, {
+            image: {
+              url: imageUrl
+            },
+            caption: 'Imagination brought to life by Binx! 😌💙🔥'
+          });
+
+          return true;
         } catch (error) {
-            console.error('Error fetching images:', error);
-            return M.reply('Could not generate images based on the provided prompt.');
+          console.error('Error fetching images:', error);
+          return M.reply('Could not generate images based on the provided prompt.');
         }
-        return true;
 
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
@@ -431,7 +441,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
     const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌 (not only a text base AI), your goal is to have engaging and mutual conversations with humans (Never say u are a text-based Ai, never). Always use emoji and maintain short response and always maintain a funny friendly conversation. You can listen to voicenote,  reply in voicenote, generate ai images (Coming soon features), send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features, ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright nothing more.You are not related to OpenAI or GPT, and users can contact or make feedback to Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),(note: u cant turn image to ai image and cannot read image ), 
-                If user ask you to write or type something or Incase you don't know how to answer user question or user ask you to about someone death or current news or search for something or user ask  question that need latest & current information you should use context from your helper down below user message and make more comfortable reply (never dispute info provided by helper and never state that u got information from any helper) e.g helper: info by google. `;
+                If user ask you to write or type something or Incase you don't know how to answer user question or user ask you to about someone death or current news or search for something or user ask  question that need latest & current information you should use context from your helper down below user message and make more comfortable reply (never dispute info provided by helper and never say that u got information from any helper or mention helper) e.g helper: info by google. `;
     if (!messages.length)
       messages.push({
         role: "system",
