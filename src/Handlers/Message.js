@@ -273,6 +273,8 @@ module.exports = async ({ messages }, client) => {
 
         axios.post(url, form, { headers })
           .then(async response => {
+
+            console.log(response.data)
             const imageBuffer = Buffer.from(response.data, 'binary');
             const filename = response.headers['x-filename'];
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
