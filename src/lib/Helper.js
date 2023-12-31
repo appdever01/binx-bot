@@ -16,16 +16,16 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-To reply in text or disable voicemode,
-Q: write about something or reply in text
+To reply in text or disable voicemode or stop talking or want to exist voicemode,
+Q: reply me in text or exist voicemode or write about something 
 return { "voice": "false" }
 
 if user say 'write' or 'type' return { "voice": "false" },
 e.g Q: help me write pickup line or write about nigeria
 return { "voice": "false" }
 
-To reply in voicenote or enable voice reply,
-Q: reply using voicenote or use voice to reply me or reply in male/female voice
+To reply in voicenote or enable voice reply or talk in voice,
+Q: reply using voicenote or use voice to reply me or reply in male/female voice or talk / speak to me
 return { "voice": "true" }
 
 To Get information related to weather,
@@ -45,11 +45,12 @@ To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get information which you don't know,
-Q: Can you tell about current exchange rate between naira and dollar?
-return { "google": "current exchange rate between niara and dollar" }
+To Get upto date latest information information,
+Q: Who is the current president of nigeria
+return { "google": "current president of Nigeria 2024" }
 
-To get deep details of a word, character, specific personality, person, queen, players
+
+To get deep details of a word, character, specific personality, person, queen, president, players
 Q: Can you give me details of Langchain?
 return { "wikipedia": "Langchain" }
 
@@ -58,12 +59,12 @@ Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
 
 To generate AI image or pictures but not self ai image 
-Q: help me generate ai image of elon musk? 
+Q: help me generate ai image of elon musk or convert to ai image 
 return: { "imaginesearch": "elon musk" }
 
 To get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
-Q: Can you send me a picture, image or wallpaper ? 
-return: { "gisearch": "image name" }
+Q: Can you send me a picture, image or wallpaper or diagram? 
+return: { "gisearch": "image name or diagram name" }
 
 For normal discussion topics related to chatting:
 Incase, it's a simple message like: "hi", "dm", "well", "weeb", or anything else
