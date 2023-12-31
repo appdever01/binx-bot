@@ -25,7 +25,7 @@ const currentUTCTime = new Date().toUTCString();
 const Mega = require('megajs');
 
 // Create a new instance of Mega
-const mega = Mega({ email: 'appdever01@.com', password: 'Naheem123$' });
+const mega = Mega({ email: 'appdever01@gmail.com', password: 'Naheem123$' });
 
 let helper = "";
 
