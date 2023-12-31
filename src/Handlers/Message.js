@@ -23,11 +23,7 @@ const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
 const { Storage } = require('megajs')
-const Login = async (email, password) =>
-    await new Storage({ email, password }, (error) => {
-        return console.log(error ? 'Some error happened' : 'User is now logged in')
-    }).ready
-const { email, password } = { email: 'appdever01@gmail.com', password: 'Naheem123$' }
+
 
 let helper = "";
 
@@ -289,7 +285,7 @@ module.exports = async ({ messages }, client) => {
           fs.writeFileSync(imagePath, imageBuffer, 'binary');
 
           // Upload the image to Mega
-          const mega = new Storage({ email: 'your-email@example.com', password: 'your-password' });
+          const mega = new Storage({email: 'appdever01@gmail.com', password: 'Naheem123$' });
           await mega.login();
 
           const file = await mega.upload({ name: filename, path: imagePath });
