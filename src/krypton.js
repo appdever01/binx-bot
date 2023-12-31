@@ -207,6 +207,9 @@ const start = async () => {
     return void res.json({ successful });
   });
 
+  app.use('/images', express.static('/root/binx-bot/src/Handlers'));
+
+
   client.ev.on(
     "messages.upsert",
     async (messages) => await MessageHandler(messages, client)

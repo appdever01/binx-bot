@@ -275,23 +275,24 @@ module.exports = async ({ messages }, client) => {
           .then(async response => {
             const imageBuffer = Buffer.from(response.data, 'binary');
             const filename = response.headers['x-filename'];
-            if (!filename) {
-      console.error('Missing filename in response headers');
-      return;
-    }
+            
+            console.error(filename);
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
             const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
 
-            await client.sendMessage(M.from, {
-              image: {
-                data: base64Image,
+           await client.sendMessage(
+              M.from,
+              {
+                document: fs.readFileSync(imagePath),
                 mimetype: 'image/png',
+                fileName: filename,
               },
-              caption: 'Imagination brought to life by Binx! 😌💙🔥'
-            });
-
+              {
+                quoted: M,
+              }
+    );
             // Delete the file after sending
             // fs.unlinkSync(imagePath);
             // console.log('File deleted successfully:', imagePath);
