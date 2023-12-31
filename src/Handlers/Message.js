@@ -246,7 +246,7 @@ module.exports = async ({ messages }, client) => {
         const apiUrl = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
-        const prompt = type.imaginesearch;
+        const prompt = 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ';
 
         try {
           const response = await axios.post(apiUrl, null, {
