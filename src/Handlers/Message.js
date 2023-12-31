@@ -241,12 +241,11 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        const axios = require('axios');
+        
+const apiUrl = 'https://api.dezgo.com/text2image';
+const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
-        const apiUrl = 'https://api.dezgo.com/text2image';
-        const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
-
-        const prompt = 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ';
+const prompt = 'elon musk';
 
         try {
           const response = await axios.post(apiUrl, null, {
@@ -256,13 +255,14 @@ module.exports = async ({ messages }, client) => {
             },
             params: {
               prompt,
-              width: 560,
-              height: 560,
+              width: '',
+              height: '',
               steps: 30,
               sampler: 'dpmpp_2m_karras',
               model: 'dreamshaper_8',
-              negative_prompt: 'ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, extra limbs, disfigured, deformed, body out of frame, blurry, bad anatomy, blurred, watermark, grainy, signature, cut off, draft',
+              negative_prompt: '',
               upscale: 1,
+              seed: '',
               format: 'png',
               guidance: 7
             }
