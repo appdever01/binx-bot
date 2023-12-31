@@ -17,6 +17,8 @@ const { getStats } = require("../lib/stats");
 const { Configuration, OpenAIApi } = require("openai");
 const { audioToSlice, audioMerge } = require("audio-slicer");
 const emojis = require("emoji-strip");
+const fs = require('fs');
+const path = require('path');
 const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
@@ -242,16 +244,14 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        const apiUrl = 'https://api.dezgo.com/text2image';
+        const url = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
-
-        const prompt = 'elon musk';
 
         const form = new FormData();
         form.append('lora2_strength', '.7');
         form.append('lora2', '');
         form.append('lora1_strength', '.7');
-        form.append('prompt', prompt);
+        form.append('prompt', 'elon musk');
         form.append('width', '');
         form.append('height', '');
         form.append('steps', '30');
@@ -268,23 +268,32 @@ module.exports = async ({ messages }, client) => {
           'accept': '/',
           'X-Dezgo-Key': apiKey,
           ...form.getHeaders(),
+          responseType: 'arraybuffer', 
         };
 
-        try {
-          const response = await axios.post(apiUrl, form, { headers });
-          console.log(response.data);
-          const imageUrl = response.data.url; // Assuming the response contains the image URL
-          // Send the image using client.sendMessage()
-          await client.sendMessage(M.from, {
-            image: {
-              url: imageUrl
-            },
-            caption: 'Imagination brought to life by Binx! 😌💙🔥'
+        axios.post(url, form, { headers })
+          .then(async response => {
+            const imageBuffer = Buffer.from(response.data, 'binary');
+            const filename = response.headers['x-filename'];
+            const imagePath = path.join(__dirname, filename); // Adjust the path as needed
+
+            fs.writeFileSync(imagePath, imageBuffer, 'binary');
+
+            await client.sendMessage(M.from, {
+              image: {
+                url: `file://${imagePath}`
+              },
+              caption: 'Imagination brought to life by Binx! 😌💙🔥'
+            });
+
+            // Delete the file after sending
+            fs.unlinkSync(imagePath);
+            console.log('File deleted successfully:', imagePath);
+          })
+          .catch(error => {
+            console.error(error);
+            return M.reply('Could not generate images based on the provided prompt.');
           });
-        } catch (error) {
-          console.error(error);
-          return M.reply('Could not generate images based on the provided prompt.');
-        }
           
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
