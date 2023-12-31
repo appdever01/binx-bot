@@ -280,6 +280,9 @@ module.exports = async ({ messages }, client) => {
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
               const base64Image = imageBuffer.toString('base64');
 
+              console.log(imageBuffer)
+              console.log(base64Image)
+
               await client.sendMessage(M.from, {
                 image: {
                   data: base64Image,
