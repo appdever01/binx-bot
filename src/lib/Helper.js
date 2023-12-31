@@ -45,12 +45,12 @@ To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get upto date latest information information,
-Q: Current dollar rate in nigeria
-return { "google": "dollar rate in nigeria" }
+To Get upto date latest information, news or deep information about someones death, personality, person, queen, current president , players etc
+Q: Who is the current president of nigeria
+return { "google": "current president of Nigeria 2024" }
 
 
-To get deep details of a word, character, specific personality, person, queen, current president or ruler, players
+To get extensive details of a word, history or info of a person 
 Q: Can you give me details of Langchain?
 return { "wikipedia": "Langchain" }
 
