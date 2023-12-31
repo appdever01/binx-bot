@@ -275,24 +275,18 @@ module.exports = async ({ messages }, client) => {
           .then(async response => {
             const imageBuffer = Buffer.from(response.data, 'binary');
             const filename = response.headers['x-filename'];
-            
-            console.error(filename);
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
-            const base64Image = fs.readFileSync(imagePath, { encoding: 'base64' });
+            const imageUrl = `http://binxai.tekcify.com:4000/images/${filename}`;
 
-           await client.sendMessage(
-              M.from,
-              {
-                document: fs.readFileSync(imagePath),
-                mimetype: 'image/png',
-                fileName: filename,
+            await client.sendMessage(M.from, {
+              image: {
+                url: imageUrl
               },
-              {
-                quoted: M,
-              }
-    );
+              caption: 'Imagination brought to life by Binx! 😌💙🔥'
+            });
+
             // Delete the file after sending
             // fs.unlinkSync(imagePath);
             // console.log('File deleted successfully:', imagePath);
@@ -301,8 +295,6 @@ module.exports = async ({ messages }, client) => {
             console.error(error);
             return M.reply('Could not generate images based on the provided prompt.');
           });
-
-          return true;
           
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
