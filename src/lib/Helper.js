@@ -46,11 +46,11 @@ Q: turn this image to sicker
 return { "dosticker": "true"}
 
 To Get upto date latest information information,
-Q: Who is the current president of nigeria
-return { "google": "current president of Nigeria 2024" }
+Q: Current dollar rate in nigeria
+return { "google": "dollar rate in nigeria" }
 
 
-To get deep details of a word, character, specific personality, person, queen, president, players
+To get deep details of a word, character, specific personality, person, queen, current president or ruler, players
 Q: Can you give me details of Langchain?
 return { "wikipedia": "Langchain" }
 
