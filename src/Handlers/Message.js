@@ -254,7 +254,7 @@ const prompt = 'elon musk';
               'Content-Type': 'multipart/form-data'
             },
             params: {
-              prompt,
+              prompt : 'elon musk',
               width: '',
               height: '',
               steps: 30,
