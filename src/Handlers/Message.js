@@ -286,7 +286,7 @@ module.exports = async ({ messages }, client) => {
           fs.writeFileSync(imagePath, imageBuffer, 'binary');
 
           // Upload the image to Mega
-          const file = await mega.upload({ name: filename, path: imagePath });
+          const file = await mega.upload({ name: filename, path: imagePath , size: imageBuffer.length, allowUploadBuffering: true,});
           const fileUrl = mega.exportURL(file);
           console.log('Uploaded file URL:', fileUrl);
 
