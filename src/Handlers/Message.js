@@ -242,31 +242,38 @@ module.exports = async ({ messages }, client) => {
 
     } else if (type.imaginesearch) {
         
-const apiUrl = 'https://api.dezgo.com/text2image';
-const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+          const apiUrl = 'https://api.dezgo.com/text2image';
+          const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
-const prompt = 'elon musk';
-
-        try {
-          const response = await axios.post(apiUrl, null, {
+          const prompt = 'elon musk';
+          const requestData = {
+            prompt: prompt, // Add your prompt value here
+            width: '',
+            height: '',
+            steps: 30,
+            sampler: 'dpmpp_2m_karras',
+            model: 'dreamshaper_8',
+            negative_prompt: '',
+            upscale: 1,
+            seed: '',
+            format: 'png',
+            guidance: 7
+          };
+                  try {
+                    const response = await axios.post(apiUrl, requestData, {
             headers: {
               'X-Dezgo-Key': apiKey,
-              'Content-Type': 'multipart/form-data'
-            },
-            params: {
-              prompt : 'elon musk',
-              width: '',
-              height: '',
-              steps: 30,
-              sampler: 'dpmpp_2m_karras',
-              model: 'dreamshaper_8',
-              negative_prompt: '',
-              upscale: 1,
-              seed: '',
-              format: 'png',
-              guidance: 7
+              'Content-Type': 'application/json'
             }
-          });
+          })
+            .then(response => {
+              // Handle the response
+              console.log(response.data);
+            })
+            .catch(error => {
+              // Handle the error
+              console.error(error);
+            });
 
           const imageUrl = response.headers['x-filename'];
 
