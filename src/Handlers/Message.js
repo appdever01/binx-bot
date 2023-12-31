@@ -22,6 +22,10 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
+const Mega = require('mega-api');
+
+// Create a new instance of Mega
+const mega = new Mega();
 let helper = "";
 
 module.exports = async ({ messages }, client) => {
