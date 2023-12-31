@@ -249,7 +249,21 @@ module.exports = async ({ messages }, client) => {
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
         const form = new FormData();
-        // ... rest of the code ...
+        form.append('lora2_strength', '.7');
+        form.append('lora2', '');
+        form.append('lora1_strength', '.7');
+        form.append('prompt', 'elon musk');
+        form.append('width', '');
+        form.append('height', '');
+        form.append('steps', '30');
+        form.append('sampler', 'dpmpp_2m_karras');
+        form.append('model', 'dreamshaper_8');
+        form.append('negative_prompt', '');
+        form.append('upscale', '1');
+        form.append('seed', '');
+        form.append('format', 'png');
+        form.append('guidance', '7');
+        form.append('lora1', '');
 
         const headers = {
           'accept': '/',
