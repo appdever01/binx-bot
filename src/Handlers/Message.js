@@ -275,6 +275,10 @@ module.exports = async ({ messages }, client) => {
           .then(async response => {
             const imageBuffer = Buffer.from(response.data, 'binary');
             const filename = response.headers['x-filename'];
+            if (!filename) {
+      console.error('Missing filename in response headers');
+      return;
+    }
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
@@ -296,6 +300,8 @@ module.exports = async ({ messages }, client) => {
             console.error(error);
             return M.reply('Could not generate images based on the provided prompt.');
           });
+
+          return true;
           
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
