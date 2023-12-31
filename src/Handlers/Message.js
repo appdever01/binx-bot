@@ -274,20 +274,24 @@ module.exports = async ({ messages }, client) => {
         axios.post(url, form, { headers })
           .then(async response => {
 
-            console.log(response.data)
             const imageBuffer = Buffer.from(response.data, 'binary');
             const filename = response.headers['x-filename'];
-            const imagePath = path.join(__dirname, filename); // Adjust the path as needed
+            console.error(filename);
+    const imagePath = '/root/binx-bot/src/Handlers/' + filename; // Adjust the path as needed
 
-            fs.writeFileSync(imagePath, imageBuffer, 'binary');
-            const imageUrl = `http://binxai.tekcify.com:4000/images/${filename}`;
-            console.log(imageUrl)
-            await client.sendMessage(M.from, {
-              image: {
-                url: imageUrl
-              },
-              caption: 'Imagination brought to life by Binx! 😌💙🔥'
-            });
+    fs.writeFileSync(imagePath, imageBuffer, 'binary');
+
+    await client.sendMessage(
+      M.from,
+      {
+        document: fs.readFileSync(imagePath),
+        mimetype: 'image/png',
+        fileName: filename,
+      },
+      {
+        quoted: M,
+      }
+    );
 
             // Delete the file after sending
             // fs.unlinkSync(imagePath);
