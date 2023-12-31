@@ -136,10 +136,7 @@ module.exports = async ({ messages }, client) => {
     } else if (type.weather) {
       helper = await weather(type.weather);
       await M.reply("👨🏻‍💻🔎☀️🌡");
-    } else if (type.wikipedia) {
-      helper = await wikipedia(type.wikipedia);
-      await M.reply("👨🏻‍💻🔎📚");
-    } else if (type.voice) {
+    }  else if (type.voice) {
       info.voice = type.voice;
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";

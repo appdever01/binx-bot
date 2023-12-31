@@ -49,11 +49,6 @@ To Get upto date latest information, news or deep information about someones dea
 Q: Who is the current president of nigeria
 return { "google": "current president of Nigeria 2024" }
 
-
-To get extensive details of a word, history or info of a person 
-Q: Can you give me details of Langchain?
-return { "wikipedia": "Langchain" }
-
 To get lyrics of any song with artist name,
 Q: Can you give the lyrics of let me down slowly?
 Return: { "lyrics": "let me down slowly" }
