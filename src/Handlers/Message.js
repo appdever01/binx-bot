@@ -278,13 +278,15 @@ module.exports = async ({ messages }, client) => {
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
+              const base64Image = imageBuffer.toString('base64');
 
-            await client.sendMessage(M.from, {
-              image: {
-                url: `${imagePath}`
-              },
-              caption: 'Imagination brought to life by Binx! 😌💙🔥'
-            });
+              await client.sendMessage(M.from, {
+                image: {
+                  data: base64Image,
+                  mimetype: 'image/png',
+                },
+                caption: 'Imagination brought to life by Binx! 😌💙🔥'
+              });
 
             // Delete the file after sending
             // fs.unlinkSync(imagePath);
