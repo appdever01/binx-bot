@@ -278,14 +278,22 @@ module.exports = async ({ messages }, client) => {
             const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
             fs.writeFileSync(imagePath, imageBuffer, 'binary');
-            const imageUrl = `http://binxai.tekcify.com:4000/images/${filename}`;
 
-            await client.sendMessage(M.from, {
-              image: {
-                url: imageUrl
-              },
-              caption: 'Imagination brought to life by Binx! 😌💙🔥'
-            });
+    // Read the image file and convert it to a base64-encoded string
+    const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' });
+
+    await client.sendMessage(
+      M.from,
+      {
+        image: {
+          url: `data:image/png;base64,${imageBase64}`,
+        },
+        caption: 'Imagination brought to life by Binx! 😌💙🔥'
+      },
+      {
+        quoted: M,
+      }
+    );
 
             // Delete the file after sending
             // fs.unlinkSync(imagePath);
