@@ -16,12 +16,12 @@ Q: Can you tell current time of Pakistan?
 Note: it'll take country/city
 return { "time": "Pakistan" }
 
-To reply in text or disable voicemode or stop talking or want to exist voicemode,
-Q: reply me in text or exist voicemode or write about something 
+To reply in text or disable voicemode or stop talking or want to exist voicemode or write ...,
+Q: reply me in text or exist voicemode or help me write something 
 return { "voice": "false" }
 
-if user say 'write' or 'type' return { "voice": "false" },
-e.g Q: help me write pickup line or write about nigeria
+if user say 'write something' or 'type' return { "voice": "false" },
+e.g Q: help me write pickup line or write about nigeria or give me written response or reply in text
 return { "voice": "false" }
 
 To reply in voicenote or enable voice reply or talk in voice,
