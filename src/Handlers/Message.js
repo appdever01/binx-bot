@@ -289,16 +289,16 @@ module.exports = async ({ messages }, client) => {
           await mega.login();
 
           const file = await mega.upload({ name: filename, path: imagePath, size: imageBuffer.length, allowUploadBuffering: true });
-          const fileUrl = file.link();
-          console.log('Uploaded file URL:', fileUrl);
+          // const fileUrl = file.downloadUrl();
+          console.log('Uploaded file URL:', file);
 
-          // Send the Mega file URL as a message
-          await client.sendMessage(M.from, {
-            image: {
-              url: fileUrl,
-            },
-            caption: 'Imagination brought to life by Binx! 😌💙🔥',
-          });
+          // // Send the Mega file URL as a message
+          // await client.sendMessage(M.from, {
+          //   image: {
+          //     url: fileUrl,
+          //   },
+          //   caption: 'Imagination brought to life by Binx! 😌💙🔥',
+          // });
 
           // Delete the local file after sending
           fs.unlinkSync(imagePath);
