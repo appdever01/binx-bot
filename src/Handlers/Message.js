@@ -288,7 +288,7 @@ module.exports = async ({ messages }, client) => {
           const mega = new Storage({email: 'appdever01@gmail.com', password: 'Naheem123$' });
           await mega.login();
 
-          const file = await mega.upload({ name: filename, path: imagePath });
+          const file = await mega.upload({ name: filename, path: imagePath, size: imageBuffer.length, allowUploadBuffering: true });
           const fileUrl = file.link();
           console.log('Uploaded file URL:', fileUrl);
 
