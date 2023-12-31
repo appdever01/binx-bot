@@ -22,10 +22,12 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
-const Mega = require('megajs');
-
-// Create a new instance of Mega
-const mega = Mega({ email: 'appdever01@gmail.com', password: 'Naheem123$' });
+const { Storage } = require('megajs')
+const Login = async (email, password) =>
+    await new Storage({ email, password }, (error) => {
+        return console.log(error ? 'Some error happened' : 'User is now logged in')
+    }).ready
+const { email, password } = { email: 'appdever01@gmail.com', password: 'Naheem123$' }
 
 let helper = "";
 
@@ -249,7 +251,8 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        async function uploadImageToMega() {
+
+        const uploadImageToMega = async () => {
         const url = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
@@ -274,7 +277,7 @@ module.exports = async ({ messages }, client) => {
           'accept': '/',
           'X-Dezgo-Key': apiKey,
           ...form.getHeaders(),
-          responseType: 'arraybuffer', 
+          responseType: 'arraybuffer',
         };
 
         try {
@@ -286,16 +289,19 @@ module.exports = async ({ messages }, client) => {
           fs.writeFileSync(imagePath, imageBuffer, 'binary');
 
           // Upload the image to Mega
-          const file = await mega.upload({ name: filename, path: imagePath , size: imageBuffer.length,  allowUploadBuffering: true,});
-          const fileUrl = mega.getFileLink(file);
-  console.log('Uploaded file URL:', fileUrl);
+          const mega = new Storage({ email: 'your-email@example.com', password: 'your-password' });
+          await mega.login();
+
+          const file = await mega.upload({ name: filename, path: imagePath });
+          const fileUrl = file.link();
+          console.log('Uploaded file URL:', fileUrl);
 
           // Send the Mega file URL as a message
           await client.sendMessage(M.from, {
             image: {
-              url: fileUrl
+              url: fileUrl,
             },
-            caption: 'Imagination brought to life by Binx! 😌💙🔥'
+            caption: 'Imagination brought to life by Binx! 😌💙🔥',
           });
 
           // Delete the local file after sending
@@ -307,11 +313,12 @@ module.exports = async ({ messages }, client) => {
           console.error(error);
           return M.reply('Could not upload the image to Mega.');
         }
-      }
+      };
 
       // Call the function to upload the image to Mega
       uploadImageToMega();
       return true;
+
           
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
