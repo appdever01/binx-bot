@@ -17,6 +17,7 @@ const { getStats } = require("../lib/stats");
 const { Configuration, OpenAIApi } = require("openai");
 const { audioToSlice, audioMerge } = require("audio-slicer");
 const emojis = require("emoji-strip");
+const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
 let helper = "";
@@ -241,55 +242,50 @@ module.exports = async ({ messages }, client) => {
         return true;
 
     } else if (type.imaginesearch) {
-        
-          const apiUrl = 'https://api.dezgo.com/text2image';
-          const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+        const apiUrl = 'https://api.dezgo.com/text2image';
+        const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
-          const prompt = 'elon musk';
-          const requestData = {
-            prompt: prompt, // Add your prompt value here
-            width: '',
-            height: '',
-            steps: 30,
-            sampler: 'dpmpp_2m_karras',
-            model: 'dreamshaper_8',
-            negative_prompt: '',
-            upscale: 1,
-            seed: '',
-            format: 'png',
-            guidance: 7
-          };
-                  try {
-                    const response = await axios.post(apiUrl, requestData, {
-            headers: {
-              'X-Dezgo-Key': apiKey,
-              'Content-Type': 'application/json'
-            }
-          })
-            .then(response => {
-              // Handle the response
-              console.log(response.data);
-            })
-            .catch(error => {
-              // Handle the error
-              console.error(error);
-            });
+        const prompt = 'elon musk';
 
-          const imageUrl = response.headers['x-filename'];
+        const form = new FormData();
+        form.append('lora2_strength', '.7');
+        form.append('lora2', '');
+        form.append('lora1_strength', '.7');
+        form.append('prompt', prompt);
+        form.append('width', '');
+        form.append('height', '');
+        form.append('steps', '30');
+        form.append('sampler', 'dpmpp_2m_karras');
+        form.append('model', 'dreamshaper_8');
+        form.append('negative_prompt', '');
+        form.append('upscale', '1');
+        form.append('seed', '');
+        form.append('format', 'png');
+        form.append('guidance', '7');
+        form.append('lora1', '');
 
+        const headers = {
+          'accept': '/',
+          'X-Dezgo-Key': apiKey,
+          ...form.getHeaders(),
+        };
+
+        try {
+          const response = await axios.post(apiUrl, form, { headers });
+          console.log(response.data);
+          const imageUrl = response.data.url; // Assuming the response contains the image URL
+          // Send the image using client.sendMessage()
           await client.sendMessage(M.from, {
             image: {
               url: imageUrl
             },
             caption: 'Imagination brought to life by Binx! 😌💙🔥'
           });
-
-          return true;
         } catch (error) {
-          console.error('Error fetching images:', error);
+          console.error(error);
           return M.reply('Could not generate images based on the provided prompt.');
         }
-
+          
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
