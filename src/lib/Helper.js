@@ -57,6 +57,10 @@ To generate AI image or pictures but not self ai image
 Q: help me generate ai image of elon musk or convert to ai image 
 return: { "imaginesearch": "elon musk" }
 
+To to image or pictures to ai
+Q: turn my image or picture to ai, make the image wear hat
+return: { "imgtoimg": "make the image to wear hat" }
+
 To get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
 Q: Can you send me a picture, image or wallpaper or diagram? 
 return: { "gisearch": "image name or diagram name" }
