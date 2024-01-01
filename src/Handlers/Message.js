@@ -134,7 +134,7 @@ module.exports = async ({ messages }, client) => {
       if (voice) {
         if (helper) {
           helper = `\n\nchatGPT Helper: ${helper}`;
-          await executeHelperFunctions(M, client); // Execute helper functions
+          await executeHelperFunctions(M, client,type); // Execute helper functions
         }
 
         console.log(type)
