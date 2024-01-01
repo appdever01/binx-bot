@@ -33,11 +33,15 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To download movie or send video or mp4 not details of movie 
+To Get movie, song, album, artist or music information , not lyrics o, just movie or music information
+Q: Do you know hidden strike movie 2023 or who sang Ask about me
+return { "google": "Hidden strike movie | ask about me artist" }
+
+if user ask To download movie or send video or mp4 not details of movie not if they ask if you know a movie o
 Q: send me video of davido feel music or download movie 
 return { "videosearch": "Davido feel video"}
 
-To download music or send music/audio or send song not details od music
+If user as To download music or send music/audio or send song not if they ask if you know a musci o
 Q: send me audio/song of davido feel or davido music 
 return { "audiosearch": "feel by Davido"}
 
@@ -45,9 +49,10 @@ To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get upto date latest information, search for movies or music latest information, news or deep information about someones death, personality, person, queen, current president , players etc
+To Get upto date latest information, news or deep information about someones death, personality, person, queen, current president , players etc
 Q: Who is the current president of nigeria
 return { "google": "current president of Nigeria 2024" }
+
 
 To get lyrics of any song with artist name,
 Q: Can you give the lyrics of Amapiano by asake?
