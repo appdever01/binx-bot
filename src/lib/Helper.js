@@ -33,8 +33,8 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To download or send video or mp4
-Q: send me video of davido feel music
+To download or send video or mp4 or movie
+Q: send me video of davido feel music or download movie 
 return { "videosearch": "Davido feel video"}
 
 To download or send music/audio or song
