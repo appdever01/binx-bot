@@ -153,7 +153,7 @@ module.exports = async ({ messages }, client) => {
 
         if (type.google) {
       helper = await google(type.google);
-      // await M.reply("👨🏻‍💻🔎");
+      await M.reply("👨🏻‍💻🔎");
     } else if (type.time) {
       helper = await countryTime(type.time);
       await M.reply("👨🏻‍💻⏰⌚️");
@@ -404,6 +404,8 @@ module.exports = async ({ messages }, client) => {
         await client.sendMessage(M.from, { image: { url } }, { quoted: M });
       }
       return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`);
+    } else {
+      await M.reply("👨🏻‍💻💬⌨");
     }
 
 
@@ -413,7 +415,7 @@ module.exports = async ({ messages }, client) => {
     
     if (type.google) {
       helper = await google(type.google);
-      // await M.reply("👨🏻‍💻🔎");
+      await M.reply("👨🏻‍💻🔎");
     } else if (type.time) {
       helper = await countryTime(type.time);
       await M.reply("👨🏻‍💻⏰⌚️");
@@ -664,6 +666,10 @@ module.exports = async ({ messages }, client) => {
         await client.sendMessage(M.from, { image: { url } }, { quoted: M });
       }
       return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`);
+    } else {
+      
+      await M.reply("👨🏻‍💻💬⌨");
+  
     }
     return void (await chatGPT(M, client, body, info?.voice));
   }
@@ -757,11 +763,11 @@ const ChatGPTHelper = async (apiKey, context) => {
       messages: [
         {
           role: "system",
-          content: ChatGPTHelperPrompt,  
+          content: ChatGPTHelperPrompt.trim(),  
         },
         {
           role: "user",
-          content: context.trim(),
+          content: context,
         },
       ],
     });
@@ -804,7 +810,7 @@ const chatGPT = async (M, client, context, voice = false) => {
     const res = response.data.choices[0]?.message;
     if (!res) return void M.reply("An error occurred");
     messages.push(res);
-    const mix = 7;
+    const mix = 5;
     if (messages.length >= mix) messages.splice(1, messages.length - mix);
     await client.messagesMap.set(M.from, messages);
     helper = "";
