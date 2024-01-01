@@ -21,7 +21,7 @@ const { join } = require("path");
 const { imageSync } = require("qr-image");
 const { readdirSync, remove } = require("fs-extra");
 const verification = new Map();
-const Key = 'Weeb';
+const Key = 'binx070499net123$';
 const app = express();
 app.use(express.json());
 app.use(cors());
