@@ -23,7 +23,11 @@ const FormData = require('form-data');
 const chalk = require("chalk");
 const currentUTCTime = new Date().toUTCString();
 const { Storage } = require('megajs')
-
+const Login = async (email, password) =>
+    await new Storage({ email, password }, (error) => {
+        return console.log(error ? 'Some error happened' : 'User is now logged in')
+    }).ready
+const { email, password } = { email: 'appdever01@gmail.com', password: 'Naheem123$' }
 
 let helper = "";
 
@@ -244,78 +248,51 @@ module.exports = async ({ messages }, client) => {
           return M.reply(err.toString());
           client.log(err, 'red');
         });
-        return true;
+        return true; 
 
     } else if (type.imaginesearch) {
-
-        const uploadImageToMega = async () => {
+        async function uploadImage() {
         const url = 'https://api.dezgo.com/text2image';
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
         const form = new FormData();
-        form.append('lora2_strength', '.7');
-        form.append('lora2', '');
-        form.append('lora1_strength', '.7');
-        form.append('prompt', 'elon musk');
-        form.append('width', '');
-        form.append('height', '');
-        form.append('steps', '30');
-        form.append('sampler', 'dpmpp_2m_karras');
-        form.append('model', 'dreamshaper_8');
-        form.append('negative_prompt', '');
-        form.append('upscale', '1');
-        form.append('seed', '');
-        form.append('format', 'png');
-        form.append('guidance', '7');
-        form.append('lora1', '');
+        form.append('prompt', 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ');
+        form.append('negative_prompt', 'ugly, poorly drawn, deformed, deformed limbs');
+        form.append('guidance', '8');
+        form.append('seed', '568542368');
 
         const headers = {
-          'accept': '/',
+          'content-type': 'application/x-www-form-urlencoded',
           'X-Dezgo-Key': apiKey,
-          ...form.getHeaders(),
-          responseType: 'arraybuffer',
         };
 
         try {
-          const response = await axios.post(url, form, { headers });
+          const response = await axios.post(url, form, { headers, responseType: 'arraybuffer' });
           const imageBuffer = Buffer.from(response.data, 'binary');
-          const filename = response.headers['x-filename'];
+          const randomString = Math.random().toString(36).substring(7);
+          const filename = `random_${randomString}_${Date.now()}`;
           const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
-          fs.writeFileSync(imagePath, imageBuffer, 'binary');
+          console.log(imagePath)
+          fs.writeFileSync(imagePath, imageBuffer);
+          console.log('Image saved successfully');
 
-          // Upload the image to Mega
-          const mega = new Storage({email: 'appdever01@gmail.com', password: 'Naheem123$' });
-          await mega.login();
-
-          const file = await mega.upload({ name: filename, path: imagePath, size: imageBuffer.length, allowUploadBuffering: true });
-          // const fileUrl = file.downloadUrl();
-          console.log('Uploaded file URL:', file);
-
-          // // Send the Mega file URL as a message
-          // await client.sendMessage(M.from, {
-          //   image: {
-          //     url: fileUrl,
-          //   },
-          //   caption: 'Imagination brought to life by Binx! 😌💙🔥',
-          // });
-
-          // Delete the local file after sending
-          fs.unlinkSync(imagePath);
-          console.log('File deleted successfully:', imagePath);
-
+          await client.sendMessage(M.from, {
+            image: {
+              url: imagePath // Adjust the file path as needed
+            },
+            caption: 'Imagination brought to life by Binx! 😌💙🔥'
+          });
           return true;
         } catch (error) {
-          console.error(error);
-          return M.reply('Could not upload the image to Mega.');
+          console.error('There was an error:', error);
+          return M.reply('Could not generate the image.');
         }
-      };
+      }
 
-      // Call the function to upload the image to Mega
-      uploadImageToMega();
-      return true;
-
-          
+      // Call the function to upload the image
+      uploadImage();
+      return true; 
     } else if (type.dosticker) {
       if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
