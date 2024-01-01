@@ -130,7 +130,7 @@ module.exports = async ({ messages }, client) => {
         return void (await chatGPT(M, client, text));
       }
       const result = await transcribe(await M.download(), client);
-      return void (await chatGPT(M, client, result, info?.voice));
+      return void (await chatGPT(M, client, result, info?.voice, type));
     }
     if (!body) return void null;
     
@@ -759,7 +759,7 @@ const ChatGPTHelper = async (apiKey, context) => {
   }
 };
 
-const chatGPT = async (M, client, context, voice = false) => {
+const chatGPT = async (M, client, context, voice = false, type) => {
   const { apiKey } = client;
   if (!apiKey) return null;
   const ai = new OpenAIApi(new Configuration({ apiKey }));
