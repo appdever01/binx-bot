@@ -45,7 +45,8 @@ const start = async () => {
   const apiKey2 = process.env.OPENAI_KEY2 || "";
 
   // Randomly select one of the API keys
-  const randomApiKey = Math.random() < 0.5 ? apiKey1 : apiKey2;
+  const randomApiKey = Math.random() < 0.8 ? apiKey1 : apiKey2;
+
 
   client.apiKey = randomApiKey;
   client.mods = (process.env.MODS || "2347049972537")
