@@ -317,7 +317,7 @@ module.exports = async ({ messages }, client) => {
 
       // Create a FormData object and append the necessary data
       const data = new FormData();
-      data.append("prompt", "Stunning portrait of a young woman, snowy background, digital art, highly-detailed masterpiece trending HQ");
+      data.append("prompt", type.imgtoimg);
       data.append("init_image", buffer, { filename: "image.png" });
       data.append("strength", "0.97");
       data.append("seed", "2942950965");
@@ -764,6 +764,11 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (!apiKey) return null;
   const ai = new OpenAIApi(new Configuration({ apiKey }));
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
+  if (voice) {
+    // Call executeHelperFunctions when voice note is received
+    await executeHelperFunctions(M, client, type);
+  }
+
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
     const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, read image (coming soon), send images, search for videos and music, find song lyrics, and provide weather information. Please note that you are not affiliated with OpenAI or GPT.in any way . If u are asked to reply in voicenote just say 'Alright, I will now reply in voice' For feedback or inquiries, users can contact Tekcify on IG @tekcify or visit tekcify.com. If there's something u can't do, you should let them know that ur developers are working on it, 
