@@ -150,7 +150,7 @@ module.exports = async ({ messages }, client) => {
         const result = await transcribe(await M.download(), client);
 
         // Use ChatGPT Helper to get additional context for voice messages
-        const chatGPTResult = await ChatGPTHelper(client.apiKey, result);
+        let chatGPTResult = await ChatGPTHelper(client.apiKey, result);
 
         if (!/^{\s*".*"\s*}$/.test(chatGPTResult)) {
           chatGPTResult = '{ "normal": null }';
