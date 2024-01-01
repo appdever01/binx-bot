@@ -157,7 +157,23 @@ module.exports = async ({ messages }, client) => {
         }
 
         const type = JSON.parse(chatGPTResult);
-        console.log(chatGPTResult)
+        console.log(type)
+
+        if (type.google) {
+      helper = await google(type.google);
+      // await M.reply("👨🏻‍💻🔎");
+    } else if (type.time) {
+      helper = await countryTime(type.time);
+      await M.reply("👨🏻‍💻⏰⌚️");
+    } else if (type.weather) {
+      helper = await weather(type.weather);
+      await M.reply("👨🏻‍💻🔎☀️🌡");
+    }  else if (type.voice) {
+      info.voice = type.voice;
+      await client.daily.set(M.sender, info);
+      helper = type.voice ? "🟩 Enable" : "🟥 Disable";
+      
+    }
         return void (await chatGPT(M, client, result, type?.voice));
       }
     if (!body) return void null;
