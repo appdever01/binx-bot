@@ -139,7 +139,7 @@ module.exports = async ({ messages }, client) => {
         }
 
         const result = await transcribe(await M.download(), client);
-        await M.reply(`I heard you saing 👩🏻👂🎧\n\n _"${result}"`)
+        await M.reply(`I heard you saying 👩🏻👂🎧\n\n _"${result}_"`)
 
         // Use ChatGPT Helper to get additional context for voice messages
         let chatGPTResult = await ChatGPTHelper(client.apiKey, result);
