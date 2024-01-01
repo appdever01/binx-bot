@@ -94,7 +94,7 @@ module.exports = async ({ messages }, client) => {
     let result = await ChatGPTHelper(client.apiKey, body);
     if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
     const type = JSON.parse(result);
-    if (Keys.includes(M.type) && !type.dosticker) {
+    if (Keys.includes(M.type) && !type.dosticker && !type.imgtoimg) {
       const message = complement(M.type);
       return void M.reply(message);
     }
@@ -134,9 +134,6 @@ module.exports = async ({ messages }, client) => {
     }
     if (!body) return void null;
     
-
-    
-    
     if (type.google) {
       helper = await google(type.google);
       // await M.reply("👨🏻‍💻🔎");
@@ -151,6 +148,11 @@ module.exports = async ({ messages }, client) => {
       info.voice = type.voice;
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
+
+      if (helper) {
+        helper = `\n\nchatGPT Helper: ${helper}`;
+        await executeHelperFunctions(M, client, type); // Execute helper functions
+      }
     } else if (type.videosearch) {
       await M.reply("👨🏻‍💻🔎🎥");
         const link = async (term) => {
@@ -431,6 +433,268 @@ module.exports = async ({ messages }, client) => {
   }
 };
 
+const executeHelperFunctions = async (M, client, type) => {
+  if (type.google) {
+      helper = await google(type.google);
+      // await M.reply("👨🏻‍💻🔎");
+      return true;
+    } else if (type.time) {
+      helper = await countryTime(type.time);
+      await M.reply("👨🏻‍💻⏰⌚️");
+    } else if (type.weather) {
+      helper = await weather(type.weather);
+      await M.reply("👨🏻‍💻🔎☀️🌡");
+    }  else if (type.voice) {
+      info.voice = type.voice;
+      await client.daily.set(M.sender, info);
+      helper = type.voice ? "🟩 Enable" : "🟥 Disable";
+
+      if (helper) {
+        helper = `\n\nchatGPT Helper: ${helper}`;
+        await executeHelperFunctions(M, client); // Execute helper functions
+      }
+    } else if (type.videosearch) {
+      await M.reply("👨🏻‍💻🔎🎥");
+        const link = async (term) => {
+        const { videos } = await yts(term.trim());
+        if (!videos || !videos.length) return null;
+          return videos[0].url;
+        };
+
+        const term = await link(type.videosearch);
+        if (!term) return M.reply('Please provide a valid video name 💜');
+
+        const { videoDetails } = await YT.getInfo(term);
+        M.reply('Downloading has started, please wait.');
+
+        let text = `*Title:* ${videoDetails.title} | *Type:* Video | *From:* ${videoDetails.ownerChannelName}`;
+        client.sendMessage(
+          M.from,
+          {
+            image: {
+              url: `https://i.ytimg.com/vi/${videoDetails.videoId}/maxresdefault.jpg`,
+            },
+            caption: text,
+          },
+          {
+            quoted: M,
+          }
+        );
+
+        if (Number(videoDetails.lengthSeconds) > 1800) return M.reply('Cannot download videos longer than 30 minutes');
+
+          const audio = YT.getBuffer(term, 'video')
+            .then(async (res) => {
+              await client.sendMessage(
+                M.from,
+                {
+                  document: res,
+                  mimetype: 'video/mp4',
+                  fileName: videoDetails.title + '.mp4',
+                },
+                {
+                  quoted: M,
+                }
+              );
+          })
+          .catch((err) => {
+            return M.reply(err.toString());
+            client.log(err, 'red');
+          });
+          return true;
+      
+    } else if (type.audiosearch) {
+      const link = async (term) => {
+      const { videos } = await yts(term.trim());
+      if (!videos || !videos.length) return null;
+        return videos[0].url;
+      };
+
+      const term = await link(type.audiosearch);
+      if (!term) return M.reply('Please provide a valid audio name 💜');
+
+      const { videoDetails } = await YT.getInfo(term);
+      M.reply('Downloading has started, please wait.');
+
+      let text = `*Title:* ${videoDetails.title} | *Type:* Audio | *From:* ${videoDetails.ownerChannelName}`;
+      client.sendMessage(
+        M.from,
+        {
+          image: {
+            url: `https://i.ytimg.com/vi/${videoDetails.videoId}/maxresdefault.jpg`,
+          },
+          caption: text,
+        },
+        {
+          quoted: M,
+        }
+      );
+
+      if (Number(videoDetails.lengthSeconds) > 1800) return M.reply('Cannot download audio longer than 30 minutes');
+
+      const audio = YT.getBuffer(term, 'audio')
+        .then(async (res) => {
+          await client.sendMessage(
+            M.from,
+            {
+              document: res,
+              mimetype: 'audio/mpeg',
+              fileName: videoDetails.title + '.mp3',
+            },
+            {
+              quoted: M,
+            }
+          );
+        })
+        .catch((err) => {
+          return M.reply(err.toString());
+          client.log(err, 'red');
+        });
+        return true; 
+
+    } else if (type.imaginesearch) {
+        async function uploadImage() {
+        const url = 'https://api.dezgo.com/text2image';
+        const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+
+        const form = new FormData();
+        form.append('prompt', type.imaginesearch);
+        form.append('negative_prompt', 'ugly, poorly drawn, deformed, deformed limbs');
+        form.append('guidance', '8');
+        form.append('seed', '568542368');
+
+        const headers = {
+          'content-type': 'application/x-www-form-urlencoded',
+          'X-Dezgo-Key': apiKey,
+        };
+
+        try {
+          await M.reply("📸🔮🪄");
+          const response = await axios.post(url, form, { headers, responseType: 'arraybuffer' });
+          const imageBuffer = Buffer.from(response.data, 'binary');
+          const randomString = Math.random().toString(36).substring(7);
+          const filename = `random_${randomString}_${Date.now()}.png`;
+          const imagePath = path.join(__dirname, filename); // Adjust the path as needed
+
+          console.log(imagePath)
+          fs.writeFileSync(imagePath, imageBuffer);
+          console.log('Image saved successfully');
+
+          await client.sendMessage(M.from, {
+            image: {
+              url: imagePath // Adjust the file path as needed
+            },
+            caption: 'Imagination brought to life by Binx! 😌💙🔥'
+          });
+          info.count = info.count + 2;
+          await client.daily.set(M.sender, info);
+          return true;
+        } catch (error) {
+          console.error('There was an error:', error);
+          return M.reply('Could not generate the image.');
+        }
+      }
+      // Call the function to upload the image
+      uploadImage();
+      return true; 
+    } else if (type.dosticker) {
+      if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
+      return void M.reply("Caption/Quote an image/video/gif message");
+      const buffer = M.quoted ? await M.quoted.download() : await M.download();
+      const sticker = await new Sticker(buffer, {
+        pack: "Crafted by",
+        author: "Binx AI 🔥",
+        categories: ["🤩", "🎉"],
+        quality: 70,
+        type: "full",
+      }).build();
+      return void (await client.sendMessage(M.from, { sticker }, { quoted: M }));
+    } else if (type.imgtoimg) {
+      if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype)) {
+        return void M.reply("Caption/Quote an image/video/gif message");
+      }
+
+      const buffer = M.quoted ? await M.quoted.download() : await M.download();
+
+      // Create a FormData object and append the necessary data
+      const data = new FormData();
+      data.append("prompt", "Stunning portrait of a young woman, snowy background, digital art, highly-detailed masterpiece trending HQ");
+      data.append("init_image", buffer, { filename: "image.png" });
+      data.append("strength", "0.97");
+      data.append("seed", "2942950965");
+
+      const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+
+      // Make the API request
+      axios.post('https://api.dezgo.com/image2image', data, {
+        headers: {
+          'X-Dezgo-Key': apiKey,
+          ...data.getHeaders()
+        },
+        responseType: 'arraybuffer'
+      })
+        .then(async function (response) {
+          await M.reply("📸🔮🪄");
+       
+            const filename = `random_${randomString}_${Date.now()}.png`;
+            const imagePath = path.join(__dirname, filename); // Adjust the path as needed
+
+            console.log(imagePath)
+            fs.writeFileSync(imagePath, response.data);
+            console.log("Success! Writing output file...");
+
+            await client.sendMessage(M.from, {
+              image: {
+                url: imagePath // Adjust the file path as needed
+              },
+              caption: 'Binx! 📸🪄'
+            });
+
+            info.count = info.count + 2;
+          await client.daily.set(M.sender, info);
+        
+        
+
+        })
+        .catch(function (error) {
+          console.error('There was an error:', error);
+          return M.reply('Could not generate the image.');
+        });
+    }
+    else if (type.lyrics) {
+      await M.reply("👨🏻‍💻🔎🎵");
+      const data = await client.utils.fetch(
+        `https://weeb-api.vercel.app/genius?query=${type.lyrics}`
+      );
+      if (!data.length) return void M.reply("Couldn't find any lyrics");
+      const image = await client.utils.getBuffer(data[0].image);
+      let caption = `🔖 *Title:* ${data[0].title} *(${data[0].fullTitle})*\n🏮 *Artist:* ${data[0].artist}`;
+      const lyrics = await client.utils.fetch(
+        `https://weeb-api.vercel.app/lyrics?url=${data[0].url}`
+      );
+      caption += `\n\n ${lyrics}`;
+      return void (await client.sendMessage(
+        M.from,
+        { image, caption },
+        { quoted: M }
+      ));
+    } else if (Keys.includes(M.type)) {
+      const message = complement(M.type);
+      return void M.reply(message);
+    } else if (type.gisearch) {
+      await M.reply("👨🏻‍💻🔎📸");
+      const images = await client.utils.fetch(
+        `https://weeb-api.vercel.app/gisearch?query=${type.gisearch}`
+      );
+      if (!images.length) return void M.reply("Not Found");
+      for (let i = 0; i < 4; i++) {
+        const url = images[Math.floor(Math.random() * images.length)];
+        await client.sendMessage(M.from, { image: { url } }, { quoted: M });
+      }
+      return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`);
+    }
+}
+
 const formatArgs = (args) => {
   args.splice(0, 1);
   return {
@@ -480,7 +744,7 @@ const ChatGPTHelper = async (apiKey, context) => {
       messages: [
         {
           role: "system",
-          content: ChatGPTHelperPrompt,
+          content: ChatGPTHelperPrompt,  
         },
         {
           role: "user",
@@ -503,8 +767,8 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌 (not only a text base AI), your goal is to have engaging and mutual conversations with humans (Never say u are a text-based Ai, never). Always use emoji and maintain short response and always maintain a funny friendly conversation. You can listen to voicenote,  reply in voicenote, generate ai images (Coming soon features), send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features, ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright nothing more.You are not related to OpenAI or GPT, and users can contact or make feedback to Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium), if u cant do something just say your developer are working on u to do dat, 
-                If user ask you to write or type something or ask for weather info or ask for ai image or image edit ask about movie or music or Incase you don't know how to answer user question or user ask you to about someone death or current news or search for something or user ask  question that need latest & current information you should use context from your helper down below user message and make more comfortable reply (never dispute info provided by helper and never say that u got information from any helper or mention helper) e.g helper: info by google. `;
+    const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, read image (coming soon), send images, search for videos and music, find song lyrics, and provide weather information. Please note that you are not affiliated with OpenAI or GPT.in any way . If u are asked to reply in voicenote just say 'Alright, I will now reply in voice' For feedback or inquiries, users can contact Tekcify on IG @tekcify or visit tekcify.com. If there's something u can't do, you should let them know that ur developers are working on it, 
+               If a user asks about weather, AI image generation, image editing, movie or music description, movie or music download, or any question that requires the latest and current information, you can use the context from the helper below the user's message to provide a more comfortable reply. Avoid disputing the information provided by the helper and refrain from mentioning the helper explicitly e.g helper: info by google. `;
     if (!messages.length)
       messages.push({
         role: "system",

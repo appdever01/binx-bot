@@ -9,7 +9,7 @@ const exec = promisify(require("child_process").exec);
 const fs = require("fs-extra");
 const path = require("path");
 
-const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 8 features (current time, google search, weather, wikipedia details, voicenote response, write ,send video, send audio, do sticker), so when a message is about that you need to extract it
+const ChatGPTHelperPrompt = `analysis up coming messages, remember You have 8 features (current time, google search, latest news, movie search, weather, voicenote response, write/text response ,send video, send audio, do sticker), so when a message is about that you need to extract it
 e.g:
 To Get current time & date info of (Country/City),
 Q: Can you tell current time of Pakistan?
@@ -33,25 +33,25 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To download or send video or mp4 or movie
+To download movie or send video or mp4 
 Q: send me video of davido feel music or download movie 
 return { "videosearch": "Davido feel video"}
 
-To download or send music/audio or song
-Q: send me audio of davido feel or music
+To download music or send music/audio or send song
+Q: send me audio/song of davido feel or davido music 
 return { "audiosearch": "feel by Davido"}
 
 To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get upto date latest information, news or deep information about someones death, personality, person, queen, current president , players etc
+To Get upto date latest information, movies or music lastes information, news or deep information about someones death, personality, person, queen, current president , players etc
 Q: Who is the current president of nigeria
 return { "google": "current president of Nigeria 2024" }
 
 To get lyrics of any song with artist name,
-Q: Can you give the lyrics of let me down slowly?
-Return: { "lyrics": "let me down slowly" }
+Q: Can you give the lyrics of Amapiano by asake?
+Return: { "lyrics": "Amapiano by asake" }
 
 To generate AI image or pictures but not self ai image 
 Q: help me generate ai image of elon musk or convert to ai image 
