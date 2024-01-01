@@ -33,11 +33,11 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To download movie or send video or mp4 
+To download movie or send video or mp4 not details of movie 
 Q: send me video of davido feel music or download movie 
 return { "videosearch": "Davido feel video"}
 
-To download music or send music/audio or send song
+To download music or send music/audio or send song not details od music
 Q: send me audio/song of davido feel or davido music 
 return { "audiosearch": "feel by Davido"}
 
@@ -45,7 +45,7 @@ To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get upto date latest information, movies or music lastes information, news or deep information about someones death, personality, person, queen, current president , players etc
+To Get upto date latest information, search for movies or music latest information, news or deep information about someones death, personality, person, queen, current president , players etc
 Q: Who is the current president of nigeria
 return { "google": "current president of Nigeria 2024" }
 
