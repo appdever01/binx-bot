@@ -137,7 +137,6 @@ module.exports = async ({ messages }, client) => {
     if (type.google) {
       helper = await google(type.google);
       await M.reply("👨🏻‍💻🔎");
-      return true;
     } else if (type.time) {
       helper = await countryTime(type.time);
       await M.reply("👨🏻‍💻⏰⌚️");
