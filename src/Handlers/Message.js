@@ -131,6 +131,7 @@ module.exports = async ({ messages }, client) => {
       }
       const result = await transcribe(await M.download(), client);
       
+
         // Call executeHelperFunctions when voice note is received
         await executeHelperFunctions(M, client, type);
  
@@ -768,10 +769,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   if (!apiKey) return null;
   const ai = new OpenAIApi(new Configuration({ apiKey }));
   if (helper) helper = `\n\nchatGPT Helper: ${helper}`;
-  if (voice) {
-    // Call executeHelperFunctions when voice note is received
-    await executeHelperFunctions(M, client, type);
-  }
+
 
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
