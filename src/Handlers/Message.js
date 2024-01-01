@@ -133,8 +133,15 @@ module.exports = async ({ messages }, client) => {
       
 
         // Call executeHelperFunctions when voice note is received
-        await executeHelperFunctions(M, client, type);
- 
+        if (type.google || type.time || type.weather || type.voice) {
+          helper = await executeHelperFunctions(M, client, type);
+        }
+
+        // Fallback condition to always execute the helper function
+        if (!helper) {
+          helper = await executeHelperFunctions(M, client, type);
+        }
+  
       return void (await chatGPT(M, client, result, info?.voice));
     }
     if (!body) return void null;
@@ -153,10 +160,7 @@ module.exports = async ({ messages }, client) => {
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
 
-      if (helper) {
-        helper = `\n\nchatGPT Helper: ${helper}`;
-        await executeHelperFunctions(M, client, type); // Execute helper functions
-      }
+      
     } else if (type.videosearch) {
       await M.reply("👨🏻‍💻🔎🎥");
         const link = async (term) => {
