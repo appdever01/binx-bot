@@ -130,6 +130,15 @@ module.exports = async ({ messages }, client) => {
         return void (await chatGPT(M, client, text));
       }
       const result = await transcribe(await M.download(), client);
+
+      if (voice) {
+        if (helper) {
+          helper = `\n\nchatGPT Helper: ${helper}`;
+          await executeHelperFunctions(M, client); // Execute helper functions
+        }
+
+        console.log(info?.voice)
+      }
   
       return void (await chatGPT(M, client, result, info?.voice));
     }
@@ -148,10 +157,7 @@ module.exports = async ({ messages }, client) => {
       info.voice = type.voice;
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
-      if (helper) {
-        helper = `\n\nchatGPT Helper: ${helper}`;
-        await executeHelperFunctions(M, client); // Execute helper functions
-      }
+      
 
       
     } else if (type.videosearch) {
