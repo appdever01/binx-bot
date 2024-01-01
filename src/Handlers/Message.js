@@ -157,6 +157,7 @@ module.exports = async ({ messages }, client) => {
         }
 
         const type = JSON.parse(chatGPTResult);
+        console.log(chatGPTResult)
         return void (await chatGPT(M, client, result, type?.voice));
       }
     if (!body) return void null;
