@@ -137,6 +137,7 @@ module.exports = async ({ messages }, client) => {
           await executeHelperFunctions(M, client); // Execute helper functions
         }
 
+        console.log(type)
         console.log(info?.voice)
       }
   
@@ -157,8 +158,6 @@ module.exports = async ({ messages }, client) => {
       info.voice = type.voice;
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
-      
-
       
     } else if (type.videosearch) {
       await M.reply("👨🏻‍💻🔎🎥");
@@ -456,10 +455,6 @@ const executeHelperFunctions = async (M, client, type) => {
       await client.daily.set(M.sender, info);
       helper = type.voice ? "🟩 Enable" : "🟥 Disable";
 
-      if (helper) {
-        helper = `\n\nchatGPT Helper: ${helper}`;
-        await executeHelperFunctions(M, client); // Execute helper functions
-      }
     } else if (type.videosearch) {
       await M.reply("👨🏻‍💻🔎🎥");
         const link = async (term) => {
