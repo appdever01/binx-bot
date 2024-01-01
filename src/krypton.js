@@ -21,6 +21,7 @@ const { join } = require("path");
 const { imageSync } = require("qr-image");
 const { readdirSync, remove } = require("fs-extra");
 const verification = new Map();
+const Key = 'binx070499net123$';
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -154,7 +155,8 @@ const start = async () => {
   );
 
   app.all("/request", async (req, res) => {
-    const { phone } = req.method === "GET" ? req.query : req.body;
+    const { phone, key } = req.method === "GET" ? req.query : req.body;
+    if (!key || key !== Key) return void res.sendStatus(403);
     if (!phone) return void res.sendStatus(404);
     const jid = client.makeWaJid(phone);
     const valid = await client.isWaNumber(jid);
@@ -181,8 +183,9 @@ const start = async () => {
   });
 
   app.all("/verify", async (req, res) => {
-    const { phone, code, subscription } =
+    const { phone, code, subscription, key } =
       req.method === "GET" ? req.query : req.body;
+    if (!key || key !== Key) return void res.sendStatus(403);
     if (![phone, code, subscription].some(Boolean))
       return void res.sendStatus(404);
     if (!["Basic", "Premium"].includes(subscription))
