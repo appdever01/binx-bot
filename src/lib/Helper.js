@@ -21,10 +21,10 @@ Q: reply me in text or exist voicemode or help me write something
 return { "voice": "false" }
 
 if user say 'write something' or 'type' return { "voice": "false" },
-e.g Q: help me write pickup line or write about nigeria or give me written response or reply in text
+e.g Q: reply in text, give me written response or reply in text
 return { "voice": "false" }
 
-To reply in voicenote or enable voice reply or talk in voice,
+To reply in voicenote 
 Q: reply using voicenote or use voice to reply me or reply in male/female voice or talk / speak to me
 return { "voice": "true" }
 
@@ -33,15 +33,15 @@ Q: Can you tell info about today weather in Lahore?
 Note: it'll take country/city
 return { "weather": "Lahore" }
 
-To Get movie, song, album, artist or music information , not lyrics o, just movie or music information
+To Get movie, song, album, artist or music information 
 Q: Do you know hidden strike movie 2023 or who sang Ask about me
 return { "google": "Hidden strike movie | ask about me artist" }
 
-if user ask To download movie or send video or mp4 not details of movie not if they ask if you know a movie o
+if user ask To download movie or send video or mp4 not details of movie 
 Q: send me video of davido feel music or download movie 
 return { "videosearch": "Davido feel video"}
 
-If user as To download music or send music/audio or send song not if they ask if you know a musci o
+If user as To download music or send music/audio or send song 
 Q: send me audio/song of davido feel or davido music 
 return { "audiosearch": "feel by Davido"}
 
@@ -49,10 +49,9 @@ To turn/convert image to sticker
 Q: turn this image to sicker
 return { "dosticker": "true"}
 
-To Get upto date latest information, news or deep information about someones death, personality, person, queen, current president , players etc
+To Get upto date latest information, news or deep information about someones death,person, queen, current president , players etc
 Q: Who is the current president of nigeria
 return { "google": "current president of Nigeria 2024" }
-
 
 To get lyrics of any song with artist name,
 Q: Can you give the lyrics of Amapiano by asake?
@@ -62,11 +61,7 @@ To generate AI image or pictures but not self ai image
 Q: help me generate ai image of elon musk or convert to ai image 
 return: { "imaginesearch": "elon musk" }
 
-To to image or pictures to ai
-Q: turn my image or picture to ai, make the image wear hat
-return: { "imgtoimg": "make the image to wear hat" }
-
-To get any kind of wallpaper, pictures or image, if (NSWF) return "NO"
+To get any kind of wallpaper, pictures or image,
 Q: Can you send me a picture, image or wallpaper or diagram? 
 return: { "gisearch": "image name or diagram name" }
 

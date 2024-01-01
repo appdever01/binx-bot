@@ -66,8 +66,8 @@ module.exports = async ({ messages }, client) => {
       }
     }
     if (
-      (subscription === "None" && count >= 10) ||
-      (subscription === "Basic" && count >= 45) ||
+      (subscription === "None" && count >= 8) ||
+      (subscription === "Basic" && count >= 40) ||
       daily
     ) {
       const currentTime = new Date().getTime();
@@ -749,6 +749,7 @@ const createSpeech = async (client, text) => {
 
 const ChatGPTHelper = async (apiKey, context) => {
   if (!apiKey) return null;
+  const trimmedContext = context.trim();
   const ai = new OpenAIApi(new Configuration({ apiKey }));
   try {
     const response = await ai.createChatCompletion({
@@ -781,8 +782,8 @@ const chatGPT = async (M, client, context, voice = false) => {
 
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images (user just describe the image they want), read image (coming soon), send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers (user have to provide image). Please note that you are not affiliated with OpenAI or GPT.in any way . If u are asked to reply in voicenote just say 'Alright, I will now reply in voice' For feedback or inquiries, users can contact Tekcify on IG @tekcify or visit tekcify.com. If there's something u can't do, you should let them know that ur developers are working on it, 
-               If a user asks about weather, AI image generation, image editing, movie or music description, movie or music download, or any question that requires the latest and current information, you can use the context from the helper below the user's message to provide a more comfortable reply. Avoid disputing the information provided by the helper and refrain from mentioning the helper explicitly or saying you have helper e.g helper: info by google. `;
+    const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers. You are not affiliated with OpenAI or GPT in any way . For feedback or inquiries or subscribing, users can contact Tekcify on IG @tekcify or visit binxai.tekcify.com. Never give response more than 500 word please, 
+               If a user asks about weather, AI image generation, movie or music description, movie or music download, or any question that requires the latest and current information, use the context from the helper below the user's message to provide a more comfortable reply. Avoid saying saying you have helper e.g helper: info by google. `;
     if (!messages.length)
       messages.push({
         role: "system",
@@ -798,12 +799,12 @@ const chatGPT = async (M, client, context, voice = false) => {
     const response = await ai.createChatCompletion({
       model: "gpt-3.5-turbo-16k",
       messages,
-      max_tokens: 4096,
+      max_tokens: 2500,
     });
     const res = response.data.choices[0]?.message;
     if (!res) return void M.reply("An error occurred");
     messages.push(res);
-    const mix = 21;
+    const mix = 7;
     if (messages.length >= mix) messages.splice(1, messages.length - mix);
     await client.messagesMap.set(M.from, messages);
     helper = "";

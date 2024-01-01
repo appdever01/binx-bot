@@ -40,8 +40,14 @@ const start = async () => {
 
   client.name = process.env.NAME || "Binx";
   client.prefix = process.env.PREFIX || "!";
-  client.apiKey = process.env.OPENAI_KEY || "";
-  client.mods = (process.env.MODS || "2349159899405")
+  const apiKey1 = process.env.OPENAI_KEY1 || "";
+  const apiKey2 = process.env.OPENAI_KEY2 || "";
+
+  // Randomly select one of the API keys
+  const randomApiKey = Math.random() < 0.5 ? apiKey1 : apiKey2;
+
+  client.apiKey = randomApiKey;
+  client.mods = (process.env.MODS || "2347049972537")
     .split(", ")
     .map((jid) => `${jid}@s.whatsapp.net`);
 
