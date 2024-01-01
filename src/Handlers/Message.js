@@ -140,9 +140,11 @@ module.exports = async ({ messages }, client) => {
 
         console.log(type)
         console.log(info?.voice)
+
+        return void (await chatGPT(M, client, result, info?.voice));
       }
   
-      return void (await chatGPT(M, client, result, info?.voice));
+      
     }
     if (!body) return void null;
     
