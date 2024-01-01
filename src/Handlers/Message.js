@@ -256,7 +256,7 @@ module.exports = async ({ messages }, client) => {
         const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
 
         const form = new FormData();
-        form.append('prompt', 'an astronaut riding a horse, digital art, epic lighting, highly-detailed masterpiece trending HQ');
+        form.append('prompt', type.imaginesearch);
         form.append('negative_prompt', 'ugly, poorly drawn, deformed, deformed limbs');
         form.append('guidance', '8');
         form.append('seed', '568542368');
@@ -270,7 +270,7 @@ module.exports = async ({ messages }, client) => {
           const response = await axios.post(url, form, { headers, responseType: 'arraybuffer' });
           const imageBuffer = Buffer.from(response.data, 'binary');
           const randomString = Math.random().toString(36).substring(7);
-          const filename = `random_${randomString}_${Date.now()}`;
+          const filename = `random_${randomString}_${Date.now()}.png`;
           const imagePath = path.join(__dirname, filename); // Adjust the path as needed
 
           console.log(imagePath)
@@ -283,13 +283,14 @@ module.exports = async ({ messages }, client) => {
             },
             caption: 'Imagination brought to life by Binx! 😌💙🔥'
           });
+          info.count = info.count + 2;
+          await client.daily.set(M.sender, info);
           return true;
         } catch (error) {
           console.error('There was an error:', error);
           return M.reply('Could not generate the image.');
         }
       }
-
       // Call the function to upload the image
       uploadImage();
       return true; 
@@ -305,6 +306,56 @@ module.exports = async ({ messages }, client) => {
         type: "full",
       }).build();
       return void (await client.sendMessage(M.from, { sticker }, { quoted: M }));
+    } else if (type.imgtoimg) {
+      if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype)) {
+        return void M.reply("Caption/Quote an image/video/gif message");
+      }
+
+      const buffer = M.quoted ? await M.quoted.download() : await M.download();
+
+      // Create a FormData object and append the necessary data
+      const data = new FormData();
+      data.append("prompt", "Stunning portrait of a young woman, snowy background, digital art, highly-detailed masterpiece trending HQ");
+      data.append("init_image", buffer, { filename: "image.png" });
+      data.append("strength", "0.97");
+      data.append("seed", "2942950965");
+
+      const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91';
+
+      // Make the API request
+      axios.post('https://api.dezgo.com/image2image', data, {
+        headers: {
+          'X-Dezgo-Key': apiKey,
+          ...data.getHeaders()
+        },
+        responseType: 'arraybuffer'
+      })
+        .then(async function (response) {
+       
+            const filename = `random_${randomString}_${Date.now()}.png`;
+            const imagePath = path.join(__dirname, filename); // Adjust the path as needed
+
+            console.log(imagePath)
+            fs.writeFileSync(imagePath, response.data);
+            console.log("Success! Writing output file...");
+
+            await client.sendMessage(M.from, {
+              image: {
+                url: imagePath // Adjust the file path as needed
+              },
+              caption: 'Binx! 📸🪄'
+            });
+
+            info.count = info.count + 2;
+          await client.daily.set(M.sender, info);
+        
+        
+
+        })
+        .catch(function (error) {
+          console.error('There was an error:', error);
+          return M.reply('Could not generate the image.');
+        });
     }
     else if (type.lyrics) {
       await M.reply("👨🏻‍💻🔎🎵");
@@ -451,7 +502,7 @@ const chatGPT = async (M, client, context, voice = false) => {
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
     const prompt = `You are Binx Ai, a personal friendly WhatsApp AI Bot developed by Tekcify 💜😌 (not only a text base AI), your goal is to have engaging and mutual conversations with humans (Never say u are a text-based Ai, never). Always use emoji and maintain short response and always maintain a funny friendly conversation. You can listen to voicenote,  reply in voicenote, generate ai images (Coming soon features), send images, search for video and musics, search for songs lyrics, and find weather info of places (which are your new features, ur ability to read img/video is coming in next upgrade). If user ask for voice note, just say alright nothing more.You are not related to OpenAI or GPT, and users can contact or make feedback to Tekcify on IG @tekcify or their web tekcify.com (note: users get 10 free responses per day. redirect them to tekcify.com for more info if they wan to subscribe for premium),(note: u cant turn image to ai image and cannot read image ), 
-                If user ask you to write or type something or Incase you don't know how to answer user question or user ask you to about someone death or current news or search for something or user ask  question that need latest & current information you should use context from your helper down below user message and make more comfortable reply (never dispute info provided by helper and never say that u got information from any helper or mention helper) e.g helper: info by google. `;
+                If user ask you to write or type something or ask about movie or music or Incase you don't know how to answer user question or user ask you to about someone death or current news or search for something or user ask  question that need latest & current information you should use context from your helper down below user message and make more comfortable reply (never dispute info provided by helper and never say that u got information from any helper or mention helper) e.g helper: info by google. `;
     if (!messages.length)
       messages.push({
         role: "system",
