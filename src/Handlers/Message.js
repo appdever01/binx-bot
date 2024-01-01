@@ -132,7 +132,7 @@ module.exports = async ({ messages }, client) => {
         const result = await transcribe(await M.download(), client);
         let rst = await ChatGPTHelper(client.apiKey, result);
         if (!/^{\s*".*"\s*}$/.test(result)) rst = '{ "normal": null }';
-        const type = JSON.parse(result);
+        const type = JSON.parse(rst);
 
         if (voice) {
 
