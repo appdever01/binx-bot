@@ -91,50 +91,65 @@ module.exports = async ({ messages }, client) => {
       );
     }
     
-      let result = await ChatGPTHelper(client.apiKey, body);
-      if (!/^{\s*".*"\s*}$/.test(result)) result = '{ "normal": null }';
-      const type = JSON.parse(result);
-      if (Keys.includes(M.type) && !type.dosticker && !type.imgtoimg) {
-        const message = complement(M.type);
-        return void M.reply(message);
-      }
-      info.count = info.count + 1;
-      await client.daily.set(M.sender, info);
       if (M.type === "audioMessage") {
-        const voice = M.message?.audioMessage?.ptt;
-        await M.reply(voice ? "👩🏻👂🎧" : "👩🏻🎧✍️");
-        if (!voice) {
-          let text = "Write a Quick and Short Summary of text below:\n\n";
-          const duration = M.message?.audioMessage?.seconds;
-          if (duration > 600)
-            return void M.reply(
-              "You are only allowed to use audio less then 10 minutes"
-            );
-          if (duration > 75) {
-            const audios = await audioToSlice(await M.download(), 75);
-            if (!audios || !audios.length)
-              return void M.reply("An error occurred");
-            if (audios.length) {
-              const total = audios.length;
-              for (let i = 0; i < total; i++) {
-                const result = await transcribe(audios[i], client);
-                text += result + "\n";
-                await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`);
-              }
-            }
-            return void (await chatGPT(M, client, text));
-          }
-          const result = await transcribe(await M.download(), client);
-          await M.reply(`🎙️ *1/1* ▶️ _"${result}"_`);
-          text += result;
-          return void (await chatGPT(M, client, text));
-        }
-        const result = await transcribe(await M.download(), client);
+  const voice = M.message?.audioMessage?.ptt;
+  await M.reply(voice ? "👩🏻👂🎧" : "👩🏻🎧✍️");
 
-       return void (await chatGPT(M, client, result, info?.voice));
-  
-      
+  if (!voice) {
+    let text = "Write a Quick and Short Summary of text below:\n\n";
+    const duration = M.message?.audioMessage?.seconds;
+
+    if (duration > 600) {
+      return void M.reply("You are only allowed to use audio less than 10 minutes");
     }
+
+    if (duration > 75) {
+      const audios = await audioToSlice(await M.download(), 75);
+
+      if (!audios || !audios.length) {
+        return void M.reply("An error occurred");
+      }
+
+      if (audios.length) {
+        const total = audios.length;
+
+        for (let i = 0; i < total; i++) {
+          const result = await transcribe(audios[i], client);
+          text += result + "\n";
+          await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`);
+        }
+      }
+
+      return void (await chatGPT(M, client, text));
+    }
+
+    const result = await transcribe(await M.download(), client);
+    await M.reply(`🎙️ *1/1* ▶️ _"${result}"_`);
+    text += result;
+
+    // Use ChatGPT Helper to get additional context
+    const chatGPTResult = await ChatGPTHelper(client.apiKey, text);
+
+    if (!/^{\s*".*"\s*}$/.test(chatGPTResult)) {
+      chatGPTResult = '{ "normal": null }';
+    }
+
+    const type = JSON.parse(chatGPTResult);
+    return void (await chatGPT(M, client, text, type?.voice));
+  }
+
+  const result = await transcribe(await M.download(), client);
+
+  // Use ChatGPT Helper to get additional context for voice messages
+  const chatGPTResult = await ChatGPTHelper(client.apiKey, result);
+
+  if (!/^{\s*".*"\s*}$/.test(chatGPTResult)) {
+    chatGPTResult = '{ "normal": null }';
+  }
+
+  const type = JSON.parse(chatGPTResult);
+  return void (await chatGPT(M, client, result, type?.voice));
+}
     if (!body) return void null;
     
     if (type.google) {
@@ -464,22 +479,11 @@ const moderate = async (M, client, admins, body) => {
 };
 
 
-const createSpeech = async (client, context) => {
-  const latestInfo = await ChatGPTHelper(client.apiKey, context);
-
-  if (!latestInfo) {
-    return "Unable to fetch the latest information.";
-  }
-
-  const audios = await toSpeech(latestInfo);
-
-  if (!audios.length) {
-    return "Unable to make long text as audio.";
-  }
-
+const createSpeech = async (client, text) => {
+  const audios = await toSpeech(text);
+  if (!audios.length) return "Unable to make long text as audio";
   const audio = await audioMerge(audios);
   const buffer = await client.utils.mp3ToOpus(audio);
-
   return buffer;
 };
 
