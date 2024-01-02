@@ -67,28 +67,34 @@ module.exports = async ({ messages }, client) => {
     }
     if (
       (subscription === "None" && count >= 8) ||
-      (subscription === "Basic" && count >= 40) ||
+      (subscription === "Basic" && count >= 30) || (subscription === "Premium" && count >= 50) ||
       daily
     ) {
       const currentTime = new Date().getTime();
       const lastTime = daily ? Number(daily) : 0;
       const sinceLastTime = currentTime - lastTime;
       if (sinceLastTime < 86400000) {
-        const minutesUntilNextTime = Math.round(
-          (86400000 - sinceLastTime) / 60000
+        const hoursUntilNextTime = Math.floor((86400000 - sinceLastTime) / 3600000);
+        const minutesUntilNextTime = Math.floor(
+          ((86400000 - sinceLastTime) % 3600000) / 60000
         );
         return void (await M.reply(
           `🟨 You have exceeded your daily response at *${new Date(
             lastTime
-          ).toLocaleTimeString()} GMT +0*. Try again in *${minutesUntilNextTime} Minutes* or Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential 😇🔥`
+          ).toLocaleTimeString()} GMT +0*. Try again in *${hoursUntilNextTime} hours and ${minutesUntilNextTime} minutes* or Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential 😇🔥`
         ));
       }
       info.count = 0;
       info.daily = currentTime;
       await client.daily.set(M.sender, info);
-      return void M.reply(
-        "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥"
-      );
+      
+      let limitMessage = "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥";
+      
+      if (subscription === "Premium") {
+        limitMessage = "*Although its unlimited but try to cool down. Thank you for your support!* 😇🔥";
+      }
+      
+      return void M.reply(limitMessage);
     }
     
       let result = await ChatGPTHelper(client.apiKey, body);
@@ -788,7 +794,7 @@ const chatGPT = async (M, client, context, voice = false) => {
 
   try {
     const messages = (await client.messagesMap.get(M.from)) || [];
-    const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers. You are not affiliated with OpenAI or GPT in any way . For feedback or inquiries or subscribing, users can contact Tekcify on IG @tekcify or visit binxai.tekcify.com. Never give response more than 500 word please, 
+    const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers. You are not using any GPT model or affiliated with OpenAI or GPT in any way . For feedback or inquiries or subscribing to binx, users can contact Tekcify on IG @tekcify or visit binxai.tekcify.com. Never give response more than 450 word please, 
                If a user asks about weather, AI image generation, movie or music description, movie or music download, or any question that requires the latest and current information, use the context from the helper below the user's message to provide a more comfortable reply. Avoid saying saying you have helper e.g helper: info by google. `;
     if (!messages.length)
       messages.push({
