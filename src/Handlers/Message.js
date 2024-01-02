@@ -67,7 +67,7 @@ module.exports = async ({ messages }, client) => {
     }
    if (
       (subscription === "None" && count >= 8) ||
-      (subscription === "Basic" && count >= 30) || (subscription === "Premium" && count >= 50) ||
+      (subscription === "Basic" && count >= 30)  ||
       daily
     ) {
       const currentTime = new Date().getTime();
