@@ -65,7 +65,7 @@ module.exports = async ({ messages }, client) => {
         );
       }
     }
-    if (
+   if (
       (subscription === "None" && count >= 8) ||
       (subscription === "Basic" && count >= 30) || (subscription === "Premium" && count >= 50) ||
       daily
@@ -87,14 +87,9 @@ module.exports = async ({ messages }, client) => {
       info.count = 0;
       info.daily = currentTime;
       await client.daily.set(M.sender, info);
-      
-      let limitMessage = "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥";
-      
-      if (subscription === "Premium") {
-        limitMessage = "*Although its unlimited but try to cool down. Thank you for your support!* 😇🔥";
-      }
-      
-      return void M.reply(limitMessage);
+      return void M.reply(
+        "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥"
+      );
     }
     
       let result = await ChatGPTHelper(client.apiKey, body);
