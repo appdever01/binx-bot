@@ -65,33 +65,38 @@ module.exports = async ({ messages }, client) => {
         );
       }
     }
-   if (
+    if (
       (subscription === "None" && count >= 8) ||
-      (subscription === "Basic" && count >= 30)  ||
+      (subscription === "Basic" && count >= 35) ||
       daily
     ) {
       const currentTime = new Date().getTime();
       const lastTime = daily ? Number(daily) : 0;
       const sinceLastTime = currentTime - lastTime;
-      if (sinceLastTime < 86400000) {
-        const hoursUntilNextTime = Math.floor((86400000 - sinceLastTime) / 3600000);
+      const nextDay = new Date(lastTime);
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setHours(0, 0, 0, 0);
+      const timeUntilNextDay = nextDay.getTime() - currentTime;
+      if (sinceLastTime < timeUntilNextDay) {
+        const hoursUntilNextTime = Math.floor(timeUntilNextDay / 3600000);
         const minutesUntilNextTime = Math.floor(
-          ((86400000 - sinceLastTime) % 3600000) / 60000
+          (timeUntilNextDay % 3600000) / 60000
         );
         return void (await M.reply(
           `🟨 You have exceeded your daily response at *${new Date(
             lastTime
           ).toLocaleTimeString()} GMT +0*. Try again in *${hoursUntilNextTime} hours and ${minutesUntilNextTime} minutes* or Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential 😇🔥`
         ));
+      } else {
+        // Reset the count and update the daily timestamp
+        info.count = 0;
+        info.daily = currentTime;
+        await client.daily.set(M.sender, info);
       }
-      info.count = 0;
-      info.daily = currentTime;
-      await client.daily.set(M.sender, info);
-      return void M.reply(
-        "*You are in Limit. Kindly visit https://binxai.tekcify.com to subscribe and unlock my full potential.* 😇🔥"
-      );
     }
     
+       info.count = info.count + 1;
+       await client.daily.set(M.sender, info);
       let result = await ChatGPTHelper(client.apiKey, body);
       if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }';
       const type = JSON.parse(result);
@@ -99,7 +104,7 @@ module.exports = async ({ messages }, client) => {
         const message = complement(M.type);
         return void M.reply(message);
       }
-      info.count = info.count + 1;
+      
       await client.daily.set(M.sender, info);
       if (M.type === "audioMessage") {
         const voice = M.message?.audioMessage?.ptt;
@@ -408,8 +413,6 @@ module.exports = async ({ messages }, client) => {
     } else {
       await M.reply("👨🏻‍💻💬⌨");
     }
-
-
         return void (await chatGPT(M, client, result, type?.voice));
       }
     if (!body) return void null;
