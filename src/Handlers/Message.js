@@ -36,7 +36,8 @@ module.exports = async ({ messages }, client) => {
         }
         let { credit, count } = info
         if (credit < messageCost) return void M.reply('Insufficient credit. Please add more funds.')
-        credit -= messageCost
+        info.credit = credit - messageCost
+        await client.daily.set(M.sender, info)
         console.log(`Remaining credit: $${credit.toFixed(2)}`)
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
@@ -45,7 +46,6 @@ module.exports = async ({ messages }, client) => {
             const message = complement(M.type)
             return void M.reply(message)
         }
-        await client.daily.set(M.sender, info)
         if (M.type === 'audioMessage') {
             const voice = M.message?.audioMessage?.ptt
             await M.reply(voice ? '👩🏻👂🎧' : '👩🏻🎧✍️')
