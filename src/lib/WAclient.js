@@ -104,7 +104,7 @@ const serialize = (M, client) => {
             M.quoted.download = () => downloadMedia(M.quoted.message)
         } catch {
             M.quoted = null
-        } 
+        }
         M.body =
             M.message?.conversation ||
             M.message?.[M.type]?.text ||
@@ -124,8 +124,7 @@ const serialize = (M, client) => {
             client.sendMessage(
                 M.from,
                 {
-                    text,
-                    
+                    text
                 },
                 {
                     quoted: M
