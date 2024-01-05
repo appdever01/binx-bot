@@ -80,7 +80,8 @@ module.exports = async ({ messages }, client) => {
       nextDay.setDate(nextDay.getDate() + 1);
       nextDay.setHours(0, 0, 0, 0);
       const timeUntilNextDay = nextDay.getTime() - currentTime;
-      
+      if (sinceLastTime < timeUntilNextDay ) {
+       
         const hoursUntilNextTime = Math.floor(timeUntilNextDay / 3600000);
         const minutesUntilNextTime = Math.floor(
           (timeUntilNextDay % 3600000) / 60000
@@ -97,11 +98,10 @@ module.exports = async ({ messages }, client) => {
         await client.daily.set(M.sender, info);
         console.log(count)
         console.log(info.count)
-       
-      }
-      
-       info.count = info.count + 1;
+        info.count = info.count + 1;
          await client.daily.set(M.sender, info);
+      }
+    }
 
     
       
