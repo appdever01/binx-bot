@@ -84,6 +84,7 @@ module.exports = async ({ messages }, client) => {
         info.count = 0;
         info.daily = currentTime;
         await client.daily.set(M.sender, info);
+
         const hoursUntilNextTime = Math.floor(timeUntilNextDay / 3600000);
         const minutesUntilNextTime = Math.floor(
           (timeUntilNextDay % 3600000) / 60000
@@ -100,6 +101,9 @@ module.exports = async ({ messages }, client) => {
         await client.daily.set(M.sender, info);
       }
     }
+
+    console.log(count)
+        console.log(info.count)
     
        info.count = info.count + 1;
 
