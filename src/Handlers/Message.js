@@ -80,10 +80,8 @@ module.exports = async ({ messages }, client) => {
       nextDay.setDate(nextDay.getDate() + 1);
       nextDay.setHours(0, 0, 0, 0);
       const timeUntilNextDay = nextDay.getTime() - currentTime;
-      if (sinceLastTime < timeUntilNextDay) {
-        info.count = 0;
-        info.daily = currentTime;
-        await client.daily.set(M.sender, info);
+      if (sinceLastTime < timeUntilNextDay && (count >=8 || count >=35) ) {
+       
 
         console.log(count)
         console.log(info.count)
