@@ -14,7 +14,7 @@ const path = require('path')
 const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
-let messageCost = 0.02
+const messageCost = 0.02
 let helper = ''
 
 module.exports = async ({ messages }, client) => {
@@ -34,7 +34,7 @@ module.exports = async ({ messages }, client) => {
             info = { credit: 5, count: 0 }
             await client.daily.set(M.sender, info)
         }
-        const { credit, count } = info
+        let { credit, count } = info
         if (credit < messageCost) return void M.reply('Insufficient credit. Please add more funds.')
         credit -= messageCost
         console.log(`Remaining credit: $${credit.toFixed(2)}`)
