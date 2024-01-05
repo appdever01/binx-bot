@@ -14,7 +14,7 @@ const path = require('path')
 const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
-const messageCost = 0.02
+let messageCost = 0.02
 let helper = ''
 
 module.exports = async ({ messages }, client) => {
