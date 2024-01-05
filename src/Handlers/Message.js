@@ -70,6 +70,9 @@ module.exports = async ({ messages }, client) => {
       (subscription === "Basic" && count >= 35) ||
       daily
     ) {
+      info.count = 0;
+        info.daily = currentTime;
+        await client.daily.set(M.sender, info);
       const currentTime = new Date().getTime();
       const lastTime = daily ? Number(daily) : 0;
       const sinceLastTime = currentTime - lastTime;
@@ -96,7 +99,15 @@ module.exports = async ({ messages }, client) => {
     }
     
        info.count = info.count + 1;
-       await client.daily.set(M.sender, info);
+
+// Check if the count has reached the maximum allowed count for the user's subscription level
+const maxCount = subscription === "None" ? 8 : 35;
+if (info.count >= maxCount) {
+  // Set the daily timestamp to the current time to start the cooldown countdown
+  info.daily = new Date().getTime();
+}
+
+await client.daily.set(M.sender, info);
       let result = await ChatGPTHelper(client.apiKey, body);
       if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }';
       const type = JSON.parse(result);
