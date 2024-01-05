@@ -102,17 +102,13 @@ module.exports = async ({ messages }, client) => {
         await client.daily.set(M.sender, info);
         console.log(count)
         console.log(info.count)
+        info.count = info.count + 1;
+         await client.daily.set(M.sender, info);
       }
     }
 
     
-    
-       info.count = info.count + 1;
-
-
-        await client.daily.set(M.sender, info);
-        console.log(count)
-        console.log(info.count)
+      
       let result = await ChatGPTHelper(client.apiKey, body);
       if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }';
       const type = JSON.parse(result);
