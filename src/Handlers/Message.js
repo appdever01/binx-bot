@@ -74,15 +74,16 @@ module.exports = async ({ messages }, client) => {
       const currentTime = new Date().getTime();
       const lastTime = daily ? Number(daily) : 0;
 
-      info.count = 0;
-        info.daily = currentTime;
-        await client.daily.set(M.sender, info);
+      
       const sinceLastTime = currentTime - lastTime;
       const nextDay = new Date(lastTime);
       nextDay.setDate(nextDay.getDate() + 1);
       nextDay.setHours(0, 0, 0, 0);
       const timeUntilNextDay = nextDay.getTime() - currentTime;
       if (sinceLastTime < timeUntilNextDay) {
+        info.count = 0;
+        info.daily = currentTime;
+        await client.daily.set(M.sender, info);
         const hoursUntilNextTime = Math.floor(timeUntilNextDay / 3600000);
         const minutesUntilNextTime = Math.floor(
           (timeUntilNextDay % 3600000) / 60000
