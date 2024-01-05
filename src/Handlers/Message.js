@@ -70,11 +70,13 @@ module.exports = async ({ messages }, client) => {
       (subscription === "Basic" && count >= 35) ||
       daily
     ) {
+      
+      const currentTime = new Date().getTime();
+      const lastTime = daily ? Number(daily) : 0;
+
       info.count = 0;
         info.daily = currentTime;
         await client.daily.set(M.sender, info);
-      const currentTime = new Date().getTime();
-      const lastTime = daily ? Number(daily) : 0;
       const sinceLastTime = currentTime - lastTime;
       const nextDay = new Date(lastTime);
       nextDay.setDate(nextDay.getDate() + 1);
