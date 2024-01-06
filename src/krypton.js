@@ -176,7 +176,7 @@ const start = async () => {
         info.credit = (info.credit || 0) + credit
         info.count = 0
         await client.daily.set(jid, info)
-        const successful = `Congratulations 🎉🎊. You have successfully added $${cr.toFixed(2)} to your balance ✅`
+        const successful = `Congratulations 🎉🎊. You have successfully added $${cr.toFixed(3)} to your balance ✅`
         await client.sendMessage(jid, { text: successful })
         return void res.json({ successful })
     })

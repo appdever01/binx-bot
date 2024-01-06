@@ -14,11 +14,12 @@ const path = require('path')
 const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
-const messageCost = 7.0
-const plagarismCost = 0.02
-const pdfCost = 0.02
-const enhancerCost = 0.02
-const imagecost = 0.02
+const messageCost = 0.003
+const plagarismCost = 0.03
+const pdfCost = 0.03
+const enhancerCost = 0.03
+const imagecost = 0.033
+const sticker = 0.009
 const aiimagecost = 0.02
 let helper = ''
 
@@ -43,7 +44,7 @@ module.exports = async ({ messages }, client) => {
         if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - messageCost
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${credit.toFixed(2)}`)
+        console.log(`Remaining credit: $${credit.toFixed(3)}`)
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
