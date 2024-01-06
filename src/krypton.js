@@ -171,10 +171,10 @@ const start = async () => {
         if (!storedCode || Date.now() > storedCode?.expiration || otp !== storedCode?.code)
             return void res.status(400).json({ failed: 'Invalid or Expired Code' })
         const info = await client.daily.get(jid)
-        info.credit = (info.credit || 0) + parseInt(credit)
+        info.credit = (info.credit || 0) + parseFloat(credit)
         info.count = 0
         await client.daily.set(jid, info)
-        const successful = `Congratulations 🎉🎊. You have successfully added $${parseInt(credit)} to your balance ✅`
+        const successful = `Congratulations 🎉🎊. You have successfully added $${credit.toFixed(2)} to your balance ✅`
         await client.sendMessage(jid, { text: successful })
         return void res.json({ successful })
     })
