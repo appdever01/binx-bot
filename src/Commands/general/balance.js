@@ -10,6 +10,6 @@ module.exports = {
             info = { credit: 5, count: 0 }
             await client.daily.set(M.sender, info)
         }
-        return void M.reply(`Your Remaining credit: $${info.credit.toFixed(3)}`)
+        return void M.reply(`Your Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
     }
 }
