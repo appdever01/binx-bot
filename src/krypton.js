@@ -172,10 +172,11 @@ const start = async () => {
             return void res.status(400).json({ failed: 'Invalid or Expired Code' })
        info = await client.daily.get(jid)
         info = info || {}
-        info.credit = (info.credit || 0) + parseFloat(credit)
+        const cr = parseFloat(credit) || 0 
+        info.credit = (info.credit || 0) + credit
         info.count = 0
         await client.daily.set(jid, info)
-        const successful = `Congratulations 🎉🎊. You have successfully added $${credit.toFixed(2)} to your balance ✅`
+        const successful = `Congratulations 🎉🎊. You have successfully added $${cr.toFixed(2)} to your balance ✅`
         await client.sendMessage(jid, { text: successful })
         return void res.json({ successful })
     })
