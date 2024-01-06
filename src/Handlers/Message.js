@@ -15,6 +15,11 @@ const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.02
+const plagarismCost = 0.02
+const pdfCost = 0.02
+const enhancerCost = 0.02
+const imagecost = 0.02
+const aiimagecost = 0.02
 let helper = ''
 
 module.exports = async ({ messages }, client) => {

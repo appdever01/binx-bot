@@ -171,6 +171,7 @@ const start = async () => {
         if (!storedCode || Date.now() > storedCode?.expiration || otp !== storedCode?.code)
             return void res.status(400).json({ failed: 'Invalid or Expired Code' })
         const info = await client.daily.get(jid)
+        info = info || {}
         info.credit = (info.credit || 0) + parseFloat(credit)
         info.count = 0
         await client.daily.set(jid, info)
