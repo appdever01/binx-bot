@@ -26,8 +26,10 @@ module.exports = {
             let imgData;
             if (imageBuffer.includes('jpg')) {
                 imgData = await pdfDoc.embedJpg(imageBuffer);
-            } else {
+            } else if (imageBuffer.includes('png')) {
                 imgData = await pdfDoc.embedPng(imageBuffer);
+            } else {
+                throw new Error('Unsupported image format');
             }
             const dims = pdfDoc.getPageDimensions(page);
 
