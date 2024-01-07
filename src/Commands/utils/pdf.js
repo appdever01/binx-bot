@@ -18,6 +18,8 @@ module.exports = {
         
 
         // Check the command, for instance, if it's "!topdf"
+        console.log(arg)
+        console.log(imageBuffers)
         if (arg.toLowerCase().startsWith('!topdf')) {
             // Download the image and add its buffer to the collection
             const buffer = M.quoted ? await M.quoted.download() : await M.download();
