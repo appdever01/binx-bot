@@ -12,7 +12,7 @@ module.exports = {
   exp: 15,
   description: 'Convert images to PDF',
 
-  async execute(client, arg, M, body) {
+ async execute(client, arg, M, body) {
     if (M.imageMessage) {
       if (inPdfInput.includes(M.sender)) {
         bufferImagesForPdf[M.sender].push(await M.download());
