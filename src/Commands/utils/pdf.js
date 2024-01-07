@@ -24,7 +24,7 @@ module.exports = {
         const pdfDoc = await PDFlib.PDFDocument.create();
 
         const page = pdfDoc.addPage();
-        const imgData = await pdfDoc.embedPng(imageBuffer);
+        const imgData = await pdfDoc.embedImage(imageBuffer);
         const dims = pdfDoc.getPageDimensions(page);
 
         // Calculate the scaling factor to fit the image on the page
