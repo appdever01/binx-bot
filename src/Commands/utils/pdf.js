@@ -14,14 +14,14 @@ module.exports = {
 
   async execute(client, arg, M) {
     if (M.imageMessage) {
-      await client.sendMessage(M.from, { text:"Send without image!" });
-      return;
+      return "Send without image!" ;
     }
 
     inPdfInput.push(M.sender);
     bufferImagesForPdf[M.sender] = [];
-    await client.sendMessage(M.from, { text:"Please send pictures one by one! Don't spam!" });
+    return "Please send pictures one by one! Don't spam!" ;
   }
+
 };
 
 async function done(M, client) {
