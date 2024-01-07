@@ -37,7 +37,7 @@ module.exports = async ({ messages }, client) => {
     if (!conditions.some(Boolean)) {
         let info = await client.daily.get(M.sender)
         if (!info) {
-            info = { credit: , count: 0 }
+            info = { credit: 0.15, count: 0 }
             await client.daily.set(M.sender, info)
         }
         let { credit, count } = info
