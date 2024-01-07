@@ -19,7 +19,7 @@ module.exports = {
         const image = await Jimp.read(buffer);
         
         const sharpeningFactor = 1.5; // Adjust the sharpening factor as needed
-        image.sharpen(sharpeningFactor);
+        image.quality(image.bitmap.width * sharpeningFactor);
         
         const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
