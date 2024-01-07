@@ -18,14 +18,13 @@ module.exports = {
         
         const image = await Jimp.read(buffer);
         
-        const sharpeningFactor = 1.5; // Adjust the sharpening factor as needed
-        const sharpened = image.convolute([
-            [-1, -1, -1],
-            [-1, 9 + sharpeningFactor, -1],
-            [-1, -1, -1]
-        ]);
+        const radius = 1; // Adjust the radius as needed
+        const strength = 0.5; // Adjust the strength as needed
+        const threshold = 0.1; // Adjust the threshold as needed
         
-        const enhancedImageBuffer = await sharpened.getBufferAsync(Jimp.MIME_JPEG);
+        image.unsharpMask(radius, strength, threshold);
+        
+        const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
         await client.sendMessage(M.from, { image: enhancedImageBuffer }, { quoted: M });
     }
