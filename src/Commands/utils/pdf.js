@@ -1,49 +1,39 @@
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
 
 module.exports = {
-    name: 'imagesToPdf',
-    aliases: ['itp'],
+    name: 'topdf',
+    aliases: ['pdf'],
     category: 'utils',
-    exp: 15,
-    description: 'Convert multiple images to PDF',
+    exp: 10,
+    description: 'Converts multiple images to PDF',
     async execute(client, flag, arg, M) {
-        if (!M.messageTypes(M.type) && (!M.quoted || !M.messageTypes(M.quoted.mtype)))
-            return void M.reply('Quote multiple image messages to convert to PDF');
-
-        const images = [];
-        if (M.quoted) {
-            const quotedMessages = await M.getQuotedMessages();
-            for (const quotedMessage of quotedMessages) {
-                if (quotedMessage.mtype === 'image') {
-                    const buffer = await quotedMessage.download();
-                    images.push(buffer);
-                }
-            }
-        } else {
-            const downloadedImages = await M.downloadAllMedia();
-            for (const downloadedImage of downloadedImages) {
-                if (downloadedImage.mtype === 'image') {
-                    images.push(downloadedImage.data);
-                }
-            }
-        }
-
-        if (images.length === 0) {
-            return void M.reply('No images found to convert to PDF');
-        }
-
+        if (!M.hasQuotedMsg || !M.quotedMsg.hasMedia || !M.hasMedia)
+            return M.reply('*Send or quote the images that you want to convert to PDF!*');
+        
+        const imageMessages = [M.quotedMsg, M];
         const pdfDoc = new PDFDocument();
-        const pdfPath = 'converted_images.pdf';
-
-        for (const image of images) {
-            pdfDoc.image(image);
+        
+        try {
+            for (let i = 0; i < imageMessages.length; i++) {
+                const imageBuffer = await client.utils.downloadImage(imageMessages[i]);
+                pdfDoc.image(imageBuffer);
+            }
+            
+            const pdfBuffer = await new Promise((resolve, reject) => {
+                const buffers = [];
+                pdfDoc.on('data', (buffer) => buffers.push(buffer));
+                pdfDoc.on('end', () => resolve(Buffer.concat(buffers)));
+                pdfDoc.end();
+            });
+            
+            await client.sendMessage(
+                M.from,
+                { document: pdfBuffer, mimetype: 'application/pdf' },
+                { quoted: M }
+            );
+        } catch (error) {
+            client.log(error, 'red');
+            return await M.reply('*Try Again*');
         }
-
-        pdfDoc.pipe(fs.createWriteStream(pdfPath));
-        pdfDoc.end();
-
-        await client.sendMessage(M.from, { document: fs.readFileSync(pdfPath) }, { quoted: M });
-        fs.unlinkSync(pdfPath);
     }
 }
