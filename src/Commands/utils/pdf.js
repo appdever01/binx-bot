@@ -13,20 +13,20 @@ module.exports = {
   description: 'Convert images to PDF',
 
   async execute(client, arg, M) {
-    if (M.imageMessage) {
-      var participant = M.sender;
-      if (bufferImagesForPdf[participant] === undefined) {
-        bufferImagesForPdf[participant] = [];
-        inPdfInput.push(participant);
-      }
-      bufferImagesForPdf[participant].push(M.imageMessage);
-      return "Please send pictures one by one! Don't spam!";
-    }
+    try {
+        if (M.imageMessage) {
+          await client.sendMessage(M.from, { text:"Send without image!" });
+          return;
+        }
 
-    inPdfInput.push(M.sender);
-    bufferImagesForPdf[M.sender] = [];
-    return "Please send pictures one by one! Don't spam!" ;
-  }
+        inPdfInput.push(M.sender);
+        bufferImagesForPdf[M.sender] = [];
+        await client.sendMessage(M.from, { text:"Please send pictures one by one! Don't spam!" });
+            } catch (err) {
+            console.log(err);
+            return "Something went wrong. Please try again!";
+      }
+    }
 
 };
 
