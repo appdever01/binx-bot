@@ -1,4 +1,4 @@
-const sharp = require('sharp');
+const Jimp = require('jimp');
 
 module.exports = {
     name: 'enhance',
@@ -7,13 +7,21 @@ module.exports = {
     exp: 15,
     description: 'enhance [quote message containing image]',
     async execute(client, flag, arg, M) {
-        if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
+        if (!M.messageTypes(M.type) && (!M.quoted || !M.messageTypes(M.quoted.mtype)))
             return void M.reply('Quote an image message to enhance');
         
-        const buffer = await M.quoted.download();
-        const enhancedImageBuffer = await sharp(buffer)
-            .sharpen()
-            .toBuffer();
+        const buffer = M.quoted ? await M.quoted.download() : await M.download();
+        
+        if (!buffer) {
+            return void M.reply('Failed to download the image');
+        }
+        
+        const image = await Jimp.read(buffer);
+        
+        const sharpeningFactor = 1.5; // Adjust the sharpening factor as needed
+        image.sharpen(sharpeningFactor);
+        
+        const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
         await client.sendMessage(M.from, { image: enhancedImageBuffer }, { quoted: M });
     }
