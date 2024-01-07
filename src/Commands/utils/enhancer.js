@@ -18,11 +18,8 @@ module.exports = {
         
         const image = await Jimp.read(buffer);
         
-        const radius = 1; // Adjust the radius as needed
-        const strength = 0.5; // Adjust the strength as needed
-        const threshold = 0.1; // Adjust the threshold as needed
-        
-        image.unsharpMask(radius, strength, threshold);
+        const contrastFactor = 0.2; // Adjust the contrast factor as needed
+        image.contrast(1 + contrastFactor);
         
         const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
