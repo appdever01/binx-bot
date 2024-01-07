@@ -14,7 +14,7 @@ const path = require('path')
 const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
-const messageCost = 0.003
+const messageCost = 0.006
 const plagarismCost = 0.03
 const pdfCost = 0.04
 const enhancerCost = 0.04
@@ -37,7 +37,7 @@ module.exports = async ({ messages }, client) => {
     if (!conditions.some(Boolean)) {
         let info = await client.daily.get(M.sender)
         if (!info) {
-            info = { credit: 5, count: 0 }
+            info = { credit: , count: 0 }
             await client.daily.set(M.sender, info)
         }
         let { credit, count } = info
