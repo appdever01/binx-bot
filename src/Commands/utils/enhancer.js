@@ -18,8 +18,8 @@ module.exports = {
         
         const image = await Jimp.read(buffer);
         
-        const scaleFactor = 2; // Adjust the scale factor as needed
-        image.resize(image.bitmap.width * scaleFactor, image.bitmap.height * scaleFactor);
+        const brightnessFactor = -0.2; // Adjust the brightness factor as needed
+        image.brightness(brightnessFactor);
         
         const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
