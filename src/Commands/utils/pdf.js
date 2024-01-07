@@ -9,56 +9,46 @@ module.exports = {
     exp: 15,
     description: 'Convert images to PDF',
     async execute(client, flag, arg, M) {
-        if (!M || !M.body || !M.body.includes('!topdf')) {
-            return void M.reply('Caption/Quote an image with /topdf');
-        }
+    if (!M.body.includes('!topdf')) return void M.reply('Caption/Quote an image with /topdf');
 
-        const images = [];
+    let imageBuffer;
+    if (!M.quoted) {
+        if (!M.hasMedia) return M.reply('Caption/Quote an image with /topdf');
+        if (M.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
+        imageBuffer = await M.download();
+    } else {
+        if (!M.quoted.hasMedia) return M.reply('Caption/Quote an image with /topdf');
+        if (M.quoted.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
+        imageBuffer = await M.quoted.download();
+    }
 
-        if (!M.quoted) {
-            if (!M.hasMedia) return M.reply('Caption/Quote an image with /topdf');
-            if (M.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-            images.push(await M.download());
-        } else {
-            if (!M.quoted.hasMedia) return M.reply('Caption/Quote an image with /topdf');
-            if (M.quoted.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-            images.push(await M.quoted.download());
-        }
+    try {
+        // Initialize the PDF library
+        const pdfDoc = await PDFlib.PDFDocument.create();
 
-        try {
-            // Initialize the PDF library
-            const pdfDoc = await PDFlib.PDFDocument.create();
+        const page = pdfDoc.addPage();
+        const imgData = await pdfDoc.embedPng(imageBuffer);
+        const dims = pdfDoc.getPageDimensions(page);
 
-            for (let image of images) {
-                // Read the image file
-                const imageData = fs.readFileSync(image);
+        // Calculate the scaling factor to fit the image on the page
+        const scale = Math.min(dims.width / imgData.width, dims.height / imgData.height);
 
-                // Add the image to the PDF document
-                const page = pdfDoc.addPage();
-                const imgData = await pdfDoc.embedPng(imageData);
-                const dims = pdfDoc.getPageDimensions(page);
-                const scale = Math.min(dims.width / imgData.width, dims.height / imgData.height);
-                page.drawImage(imgData, {
-                    x: (dims.width - imgData.width * scale) / 2,
-                    y: (dims.height - imgData.height * scale) / 2,
-                    width: imgData.width * scale,
-                    height: imgData.height * scale,
-                });
-            }
+        // Add the image to the page
+        page.drawImage(imgData, {
+            x: (dims.width - imgData.width * scale) / 2,
+            y: (dims.height - imgData.height * scale) / 2,
+            width: imgData.width * scale,
+            height: imgData.height * scale,
+        });
 
-            // Save the PDF document to a buffer
-            const pdfBytes = await pdfDoc.save();
+        // Save the PDF document to a buffer
+        const pdfBytes = await pdfDoc.save();
 
-            // Send the PDF document to the user
-            client.sendMessage(M.from, { document: pdfBytes, fileName: 'output.pdf', mimeType: 'application/pdf' });
-        } catch (error) {
-            console.error('An error occurred:', error);
-            M.reply('Failed to convert to PDF');
-        } finally {
-            // Delete the temporary image files
-            for (let image of images) {
-                await fs.promises.unlink(image);
-            }
-        }
-    },
+        // Send the PDF document to the user
+        client.sendMessage(M.from, { document: pdfBytes, fileName: 'output.pdf', mimeType: 'application/pdf' });
+    } catch (error) {
+        console.error('An error occurred:', error);
+        M.reply('Failed to convert to PDF');
+    }
+},
 };

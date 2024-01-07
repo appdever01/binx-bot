@@ -7,7 +7,7 @@ module.exports = {
     category: 'utils',
     exp: 15,
     description: 'make images clear ',
-    async execute(client, arg, M) {
+    async execute(client, flag, arg, M) {
 client.hdr = client.hdr ? client.hdr : {};
 				if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
       return void M.reply("Caption/Quote an image/video/gif message");
