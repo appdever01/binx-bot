@@ -44,8 +44,8 @@ module.exports = async ({ messages }, client) => {
         if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - messageCost
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${info.credit}`)
-        let result = await ChatGPTHelper(client. apiKey, body)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+        let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
         if (Keys.includes(M.type) && !type.dosticker) {
