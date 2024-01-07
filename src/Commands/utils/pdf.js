@@ -18,7 +18,7 @@ module.exports = {
         
 
         // Check the command, for instance, if it's "!topdf"
-        console.log(arg)
+        console.log(arg, flag)
         console.log(imageBuffers)
         if (arg.toLowerCase().startsWith('!topdf')) {
             // Download the image and add its buffer to the collection
