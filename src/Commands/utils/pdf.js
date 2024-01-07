@@ -14,7 +14,7 @@ module.exports = {
         
         if (!isImage) return M.reply("You didn't provide any images");
         
-        const images = isQuoted ? await M.quoted.downloadAll() : await M.downloadAll();
+        const images = isQuoted ? await M.download() : await M.download();
         const pdfDoc = new PDFDocument();
         
         images.forEach((image) => {
