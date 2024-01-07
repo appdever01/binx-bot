@@ -12,21 +12,22 @@ module.exports = {
   exp: 15,
   description: 'Convert images to PDF',
 
-  async execute(client, arg, M) {
-   if (M.imageMessage) {
+  async execute(client, arg, M, body) {
+    if (M.imageMessage) {
       if (inPdfInput.includes(M.sender)) {
         bufferImagesForPdf[M.sender].push(await M.download());
       } else {
         return `Send without image!`;
       }
-    } else if (M.text.toLowerCase() === '!done') {
+    } else if (M.body.toLowerCase() === '!done') {
       done(M, client);
-    } else if (M.text.toLowerCase() === '!cancel') {
+    } else if (M.body.toLowerCase() === '!cancel') {
       cancel(M, client);
     } else {
       return `Please send pictures one by one! Don't spam!`;
     }
   }
+
 
 };
 
