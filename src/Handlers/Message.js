@@ -16,11 +16,11 @@ const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.003
 const plagarismCost = 0.03
-const pdfCost = 0.03
-const enhancerCost = 0.03
-const imagecost = 0.033
-const sticker = 0.009
-const aiimagecost = 0.02
+const pdfCost = 0.04
+const enhancerCost = 0.04
+const imagecost = 0.0047
+const stickercost = 0.009
+const aiimagecost = 0.0017
 let helper = ''
 
 module.exports = async ({ messages }, client) => {
@@ -48,7 +48,7 @@ module.exports = async ({ messages }, client) => {
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
-        if (Keys.includes(M.type) && !type.dosticker && !type.imgtoimg) {
+        if (Keys.includes(M.type) && !type.dosticker) {
             const message = complement(M.type)
             return void M.reply(message)
         }
@@ -95,6 +95,7 @@ module.exports = async ({ messages }, client) => {
             } else if (type.voice) {
                 info.voice = type.voice
                 await client.daily.set(M.sender, info)
+                
                 helper = type.voice ? '🟩 Enable' : '🟥 Disable'
             } else if (type.videosearch) {
                 await M.reply('👨🏻‍💻🔎🎥')
@@ -214,7 +215,7 @@ module.exports = async ({ messages }, client) => {
                             },
                             caption: 'Imagination brought to life by Binx! 😌💙🔥'
                         })
-                        info.count = info.count + 2
+                        info.credit = credit - (messageCost + aiimagecost)
                         await client.daily.set(M.sender, info)
                         return true
                     } catch (error) {
@@ -235,46 +236,10 @@ module.exports = async ({ messages }, client) => {
                     quality: 70,
                     type: 'full'
                 }).build()
+                info.credit = credit - (messageCost + stickercost)
+                await client.daily.set(M.sender, info)
                 return void (await client.sendMessage(M.from, { sticker }, { quoted: M }))
-            } else if (type.imgtoimg) {
-                if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
-                    return void M.reply('Caption/Quote an image/video/gif message')
-                const buffer = M.quoted ? await M.quoted.download() : await M.download()
-                const data = new FormData()
-                data.append('prompt', type.imgtoimg)
-                data.append('init_image', buffer, { filename: 'image.png' })
-                data.append('strength', '0.97')
-                data.append('seed', '2942950965')
-                const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91'
-                axios
-                    .post('https://api.dezgo.com/image2image', data, {
-                        headers: {
-                            'X-Dezgo-Key': apiKey,
-                            ...data.getHeaders()
-                        },
-                        responseType: 'arraybuffer'
-                    })
-                    .then(async function (response) {
-                        await M.reply('📸🔮🪄')
-                        const filename = `random_${randomString}_${Date.now()}.png`
-                        const imagePath = path.join(__dirname, filename)
-                        console.log(imagePath)
-                        fs.writeFileSync(imagePath, response.data)
-                        console.log('Success! Writing output file...')
-                        await client.sendMessage(M.from, {
-                            image: {
-                                url: imagePath
-                            },
-                            caption: 'Binx! 📸🪄'
-                        })
-                        info.count = info.count + 2
-                        await client.daily.set(M.sender, info)
-                    })
-                    .catch(function (error) {
-                        console.error('There was an error:', error)
-                        return M.reply('Could not generate the image.')
-                    })
-            } else if (type.lyrics) {
+            }  else if (type.lyrics) {
                 await M.reply('👨🏻‍💻🔎🎵')
                 const data = await client.utils.fetch(`https://weeb-api.vercel.app/genius?query=${type.lyrics}`)
                 if (!data.length) return void M.reply("Couldn't find any lyrics")
@@ -294,7 +259,10 @@ module.exports = async ({ messages }, client) => {
                     const url = images[Math.floor(Math.random() * images.length)]
                     await client.sendMessage(M.from, { image: { url } }, { quoted: M })
                 }
+                info.credit = credit - (messageCost + imagecost)
+                await client.daily.set(M.sender, info)
                 return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
+                
             } else {
                 await M.reply('👨🏻‍💻💬⌨')
             }
@@ -432,7 +400,7 @@ module.exports = async ({ messages }, client) => {
                         },
                         caption: 'Imagination brought to life by Binx! 😌💙🔥'
                     })
-                    info.count = info.count + 2
+                    info.credit = credit - (messageCost + imagecost)
                     await client.daily.set(M.sender, info)
                     return true
                 } catch (error) {
@@ -453,45 +421,9 @@ module.exports = async ({ messages }, client) => {
                 quality: 70,
                 type: 'full'
             }).build()
+            info.credit = credit - (messageCost + stickercost)
+              await client.daily.set(M.sender, info)
             return void (await client.sendMessage(M.from, { sticker }, { quoted: M }))
-        } else if (type.imgtoimg) {
-            if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
-                return void M.reply('Caption/Quote an image/video/gif message')
-            const buffer = M.quoted ? await M.quoted.download() : await M.download()
-            const data = new FormData()
-            data.append('prompt', type.imgtoimg)
-            data.append('init_image', buffer, { filename: 'image.png' })
-            data.append('strength', '0.97')
-            data.append('seed', '2942950965')
-            const apiKey = 'DEZGO-B9BCCE2A00DEFD915A8C412062A9B76389A828DD2E21B03E8A57B2C4056E416C6CE54D91'
-            axios
-                .post('https://api.dezgo.com/image2image', data, {
-                    headers: {
-                        'X-Dezgo-Key': apiKey,
-                        ...data.getHeaders()
-                    },
-                    responseType: 'arraybuffer'
-                })
-                .then(async function (response) {
-                    await M.reply('📸🔮🪄')
-                    const filename = `random_${randomString}_${Date.now()}.png`
-                    const imagePath = path.join(__dirname, filename)
-                    console.log(imagePath)
-                    fs.writeFileSync(imagePath, response.data)
-                    console.log('Success! Writing output file...')
-                    await client.sendMessage(M.from, {
-                        image: {
-                            url: imagePath
-                        },
-                        caption: 'Binx! 📸🪄'
-                    })
-                    info.count = info.count + 2
-                    await client.daily.set(M.sender, info)
-                })
-                .catch(function (error) {
-                    console.error('There was an error:', error)
-                    return M.reply('Could not generate the image.')
-                })
         } else if (type.lyrics) {
             await M.reply('👨🏻‍💻🔎🎵')
             const data = await client.utils.fetch(`https://weeb-api.vercel.app/genius?query=${type.lyrics}`)
@@ -512,6 +444,8 @@ module.exports = async ({ messages }, client) => {
                 const url = images[Math.floor(Math.random() * images.length)]
                 await client.sendMessage(M.from, { image: { url } }, { quoted: M })
             }
+            info.credit = credit - (messageCost + imagecost)
+                await client.daily.set(M.sender, info)
             return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
         } else {
             await M.reply('👨🏻‍💻💬⌨')
