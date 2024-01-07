@@ -7,8 +7,8 @@ module.exports = {
     exp: 10,
     description: 'Converts multiple images to PDF',
     async execute(client, flag, arg, M) {
-        if (!M.hasQuotedMsg || !M.quotedMsg.hasMedia || !M.hasMedia)
-            return M.reply('*Send or quote the images that you want to convert to PDF!*');
+        if (!M.quoted || (M.quoted && M.quoted.mtype !== 'imageMessage'))
+            return M.reply('*Quote the images that you want to convert to PDF!*');
         
         const imageMessages = [M.quotedMsg, M];
         const pdfDoc = new PDFDocument();
