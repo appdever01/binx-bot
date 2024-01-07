@@ -14,7 +14,13 @@ module.exports = {
 
   async execute(client, arg, M) {
     if (M.imageMessage) {
-      return "Send without image!" ;
+      var participant = M.sender;
+      if (bufferImagesForPdf[participant] === undefined) {
+        bufferImagesForPdf[participant] = [];
+        inPdfInput.push(participant);
+      }
+      bufferImagesForPdf[participant].push(M.imageMessage);
+      return "Please send pictures one by one! Don't spam!";
     }
 
     inPdfInput.push(M.sender);
