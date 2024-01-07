@@ -9,7 +9,9 @@ module.exports = {
     exp: 15,
     description: 'Convert images to PDF',
     async execute(client, arg, M, body) {
-        if (!M.body.includes('!topdf')) return void M.reply('Caption/Quote an image with /topdf');
+        if (!M || !M.body || !M.body.includes('!topdf')) {
+            return void M.reply('Caption/Quote an image with /topdf');
+        }
 
         const images = [];
 
