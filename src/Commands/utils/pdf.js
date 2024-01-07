@@ -1,57 +1,49 @@
-const PDFlib = require('pdf-lib');
+const PDFDocument = require('pdfkit');
 const fs = require('fs');
-const path = require('path');
 
 module.exports = {
-    name: 'topdf',
-    aliases: ['pdf'],
+    name: 'imagesToPdf',
+    aliases: ['itp'],
     category: 'utils',
     exp: 15,
-    description: 'Convert images to PDF',
+    description: 'Convert multiple images to PDF',
     async execute(client, flag, arg, M) {
-        let imageBuffer;
-        const content = JSON.stringify(M.quoted)
-        const isQuoted = M.type === 'extendedTextMessage' && content.includes('imageMessage')
-        const isImage = isQuoted
-            ? M.type === 'extendedTextMessage' && content.includes('imageMessage')
-            : M.type === 'imageMessage'
-        if (!isImage) return M.reply("You didn't provide an image")
-        imageBuffer = isQuoted ? await M.quoted.download() : await M.download()
+        if (!M.messageTypes(M.type) && (!M.quoted || !M.messageTypes(M.quoted.mtype)))
+            return void M.reply('Quote multiple image messages to convert to PDF');
 
-        try {
-            // Initialize the PDF library
-            const pdfDoc = await PDFlib.PDFDocument.create();
-
-            const page = pdfDoc.addPage();
-            let imgData;
-            if (imageBuffer.includes('jpg')) {
-                imgData = await pdfDoc.embedJpg(imageBuffer);
-            } else if (imageBuffer.includes('png')) {
-                imgData = await pdfDoc.embedPng(imageBuffer);
-            } else {
-                throw new Error('Unsupported image format');
+        const images = [];
+        if (M.quoted) {
+            const quotedMessages = await M.getQuotedMessages();
+            for (const quotedMessage of quotedMessages) {
+                if (quotedMessage.mtype === 'image') {
+                    const buffer = await quotedMessage.download();
+                    images.push(buffer);
+                }
             }
-            const dims = pdfDoc.getPageDimensions(page);
-
-            // Calculate the scaling factor to fit the image on the page
-            const scale = Math.min(dims.width / imgData.width, dims.height / imgData.height);
-
-            // Add the image to the page
-            page.drawImage(imgData, {
-                x: (dims.width - imgData.width * scale) / 2,
-                y: (dims.height - imgData.height * scale) / 2,
-                width: imgData.width * scale,
-                height: imgData.height * scale,
-            });
-
-            // Save the PDF document to a buffer
-            const pdfBytes = await pdfDoc.save();
-
-            // Send the PDF document to the user
-            client.sendMessage(M.from, { document: pdfBytes, fileName: 'output.pdf', mimeType: 'application/pdf' });
-        } catch (error) {
-            console.error('An error occurred:', error);
-            M.reply('Failed to convert to PDF');
+        } else {
+            const downloadedImages = await M.downloadAllMedia();
+            for (const downloadedImage of downloadedImages) {
+                if (downloadedImage.mtype === 'image') {
+                    images.push(downloadedImage.data);
+                }
+            }
         }
-    },
-};
+
+        if (images.length === 0) {
+            return void M.reply('No images found to convert to PDF');
+        }
+
+        const pdfDoc = new PDFDocument();
+        const pdfPath = 'converted_images.pdf';
+
+        for (const image of images) {
+            pdfDoc.image(image);
+        }
+
+        pdfDoc.pipe(fs.createWriteStream(pdfPath));
+        pdfDoc.end();
+
+        await client.sendMessage(M.from, { document: fs.readFileSync(pdfPath) }, { quoted: M });
+        fs.unlinkSync(pdfPath);
+    }
+}

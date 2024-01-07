@@ -18,22 +18,14 @@ module.exports = {
         
         const image = await Jimp.read(buffer);
         
-        const brightnessFactor = 0.8; // Adjust the brightness factor as needed
+        const sharpeningFactor = 1.2; // Adjust the sharpening factor as needed
+        const sharpened = image.convolute([
+            [-1, -1, -1],
+            [-1, 9 + sharpeningFactor, -1],
+            [-1, -1, -1]
+        ]);
         
-        if (brightnessFactor < -1 || brightnessFactor > 1) {
-            return void M.reply('Brightness factor must be a number between -1 and +1');
-        }
-        
-        // Send a message indicating that the image is being processed
-        await M.reply('Processing the image. Please wait...');
-        
-        image.brightness(brightnessFactor);
-        
-        // Increase the resolution to make the image HD
-        image.resize(1920, 1080); // Adjust the dimensions as needed
-        
-    
-        const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+        const enhancedImageBuffer = await sharpened.getBufferAsync(Jimp.MIME_JPEG);
         
         await client.sendMessage(M.from, { image: enhancedImageBuffer }, { quoted: M });
     }

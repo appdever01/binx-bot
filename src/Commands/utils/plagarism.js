@@ -1,22 +1,22 @@
 const hooke = require("hookejs");
 
 module.exports = {
-  name: 'fake',
-  aliases: ['f'],
+  name: 'checkplagiarism',
+  aliases: ['cp'],
   category: 'utils',
   exp: 0,
-  description: 'Detects plagiarism in text.',
+  description: 'Checks for plagiarism in text.',
   async execute(client, arg, M) {
     try {
-      const plagiarisedText = arg.slice(1).join(" ");
+      const textToCheck = arg.join(" ");
 
-      if (!plagiarisedText) {
+      if (!textToCheck) {
         await client.sendMessage(M.from, { text: "Please provide some text to check for plagiarism." });
         return;
       }
-
+      
       // Wait for the hooke.matchPrint() function to complete
-      const result = await hooke.matchPrint({ text: plagiarisedText, threshold: 0.5 });
+      const result = await hooke.matchPrint({ text: textToCheck, threshold: 0.5 });
       let response = result ? "Plagiarism detected!" : "No plagiarism found.";
       await client.sendMessage(M.from, { text: response });
       console.log(response);
