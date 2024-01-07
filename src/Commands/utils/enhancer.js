@@ -18,7 +18,15 @@ module.exports = {
         
         const image = await Jimp.read(buffer);
         
-        const brightnessFactor = 1.1; // Adjust the brightness factor as needed
+        const brightnessFactor = 0.8; // Adjust the brightness factor as needed
+        
+        if (brightnessFactor < -1 || brightnessFactor > 1) {
+            return void M.reply('Brightness factor must be a number between -1 and +1');
+        }
+        
+        // Send a message indicating that the image is being processed
+        await M.reply('Processing the image. Please wait...');
+        
         image.brightness(brightnessFactor);
         
         // Increase the resolution to make the image HD
