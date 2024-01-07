@@ -11,6 +11,7 @@ module.exports = {
     async execute(client, flag, arg, M) {
 
     let imageBuffer;
+    const content = JSON.stringify(M.quoted)
     const isQuoted = M.type === 'extendedTextMessage' && content.includes('imageMessage')
         const isImage = isQuoted
             ? M.type === 'extendedTextMessage' && content.includes('imageMessage')
