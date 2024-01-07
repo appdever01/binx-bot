@@ -7,8 +7,7 @@ module.exports = {
     exp: 10,
     description: 'Converts multiple images to PDF',
     async execute(client, flag, arg, M) {
-        if (!client.pdfAPI) return M.reply("You didn't provide a PDF API key");
-        
+      
         const content = JSON.stringify(M.quoted);
         const isQuoted = M.type === 'extendedTextMessage' && content.includes('imageMessage');
         const isImage = isQuoted ? M.type === 'extendedTextMessage' && content.includes('imageMessage') : M.type === 'imageMessage';
