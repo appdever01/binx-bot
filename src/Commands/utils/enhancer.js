@@ -32,9 +32,7 @@ module.exports = {
         // Increase the resolution to make the image HD
         image.resize(1920, 1080); // Adjust the dimensions as needed
         
-        // Apply a sharpening filter to make the image look sharp
-        image.sharpen(0.5); // Adjust the sharpening factor as needed
-        
+    
         const enhancedImageBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
         
         await client.sendMessage(M.from, { image: enhancedImageBuffer }, { quoted: M });
