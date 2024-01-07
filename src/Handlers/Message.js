@@ -12,7 +12,7 @@ const emojis = require('emoji-strip')
 const fs = require('fs')
 const path = require('path')
 const FormData = require('form-data')
-const { done, cancel } = require('../Commands/utils/pdf')
+
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.006
@@ -464,10 +464,6 @@ module.exports = async ({ messages }, client) => {
             M.pushName
         )} in ${chalk.blueBright(result.subject || 'DM')}`
     )
-
-    if (M.body.startsWith('!done')) done(M, client)
-
-    if (M.body.startsWith('!cancel')) cancel(M, client)
 
     const cmd = args[0].toLowerCase().slice(client.prefix.length)
     const { context, flags } = formatArgs(args)
