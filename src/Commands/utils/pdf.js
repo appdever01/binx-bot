@@ -13,8 +13,9 @@ module.exports = {
     description: 'convert images to pdf',
     async execute(client, flag, arg, M) {
       
-    if (!M.messageTypes(M.type) && !M.messageTypes(M.quoted.mtype))
-        return void M.reply('🟥 *Caption/Quote an image message*');
+    if (!M.messageTypes(M.type) && (!M.quoted || !M.messageTypes(M.quoted.mtype)))
+            return void M.reply('Quote an image message to enhance');
+        
 
         // Check the command, for instance, if it's "!topdf"
         if (arg.toLowerCase().startsWith('!topdf')) {
