@@ -11,32 +11,31 @@ module.exports = {
     async execute(client, arg, M, body) {
         if (!M.body.includes('!topdf')) return void M.reply('Caption/Quote an image with /topdf');
 
+        const images = [];
+
         if (!M.quoted) {
             if (!M.hasMedia) return M.reply('Caption/Quote an image with /topdf');
             if (M.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-            M.download('image.jpg');
+            images.push(await M.download());
         } else {
             if (!M.quoted.hasMedia) return M.reply('Caption/Quote an image with /topdf');
             if (M.quoted.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-            M.quoted.download('image.jpg');
+            images.push(await M.quoted.download());
         }
-
-        let images = [];
-        images.push(fs.readFileSync('image.jpg'));
 
         try {
             // Initialize the PDF library
             const pdfDoc = await PDFlib.PDFDocument.create();
 
             for (let image of images) {
+                // Read the image file
+                const imageData = fs.readFileSync(image);
+
+                // Add the image to the PDF document
                 const page = pdfDoc.addPage();
-                const imgData = await pdfDoc.embedPng(image);
+                const imgData = await pdfDoc.embedPng(imageData);
                 const dims = pdfDoc.getPageDimensions(page);
-
-                // Calculate the scaling factor to fit the image on the page
                 const scale = Math.min(dims.width / imgData.width, dims.height / imgData.height);
-
-                // Add the image to the page
                 page.drawImage(imgData, {
                     x: (dims.width - imgData.width * scale) / 2,
                     y: (dims.height - imgData.height * scale) / 2,
@@ -54,8 +53,10 @@ module.exports = {
             console.error('An error occurred:', error);
             M.reply('Failed to convert to PDF');
         } finally {
-            // Delete the temporary image file
-            await fs.promises.unlink('image.jpg');
+            // Delete the temporary image files
+            for (let image of images) {
+                await fs.promises.unlink(image);
+            }
         }
     },
 };
