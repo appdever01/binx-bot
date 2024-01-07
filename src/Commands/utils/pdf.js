@@ -9,18 +9,14 @@ module.exports = {
     exp: 15,
     description: 'Convert images to PDF',
     async execute(client, flag, arg, M) {
-    if (!M.body.includes('!topdf')) return void M.reply('Caption/Quote an image with /topdf');
 
     let imageBuffer;
-    if (!M.quoted) {
-        if (!M.hasMedia) return M.reply('Caption/Quote an image with /topdf');
-        if (M.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-        imageBuffer = await M.download();
-    } else {
-        if (!M.quoted.hasMedia) return M.reply('Caption/Quote an image with /topdf');
-        if (M.quoted.type !== 'image') return M.reply('Caption/Quote an image with /topdf');
-        imageBuffer = await M.quoted.download();
-    }
+    const isQuoted = M.type === 'extendedTextMessage' && content.includes('imageMessage')
+        const isImage = isQuoted
+            ? M.type === 'extendedTextMessage' && content.includes('imageMessage')
+            : M.type === 'imageMessage'
+        if (!isImage) return M.reply("You didn't provide an image")
+     imageBuffer = isQuoted ? await M.quoted.download() : await M.download()
 
     try {
         // Initialize the PDF library

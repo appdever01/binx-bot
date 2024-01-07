@@ -1,5 +1,5 @@
-const { FormData } = require('form-data');
-const { Jimp } = require('jimp');
+const FormData = require('form-data');
+const Jimp = require('jimp');
 
 module.exports = {
     name: 'enhance',
