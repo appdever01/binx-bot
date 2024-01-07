@@ -1,4 +1,5 @@
 const PDFDocument = require('pdfkit');
+const axios = require('axios');
 
 module.exports = {
     name: 'topdf',
@@ -13,6 +14,14 @@ module.exports = {
         const imageMessages = [M.quotedMsg, M];
         const pdfDoc = new PDFDocument();
         
+        
+
+        // Define the downloadImage function in client.utils
+        client.utils.downloadImage = async (imageMessage) => {
+        const imageUrl = imageMessage.message.imageMessage.url;
+        const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+        return Buffer.from(response.data, 'binary');
+        };
         try {
             for (let i = 0; i < imageMessages.length; i++) {
                 const imageBuffer = await client.utils.downloadImage(imageMessages[i]);
