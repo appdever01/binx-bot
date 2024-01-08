@@ -1,6 +1,6 @@
 module.exports = {
     name: 'information',
-    aliases: ['info'],
+    aliases: ['binxstat'],
     category: 'general',
     exp: 0,
     description: 'Get information bot information',
