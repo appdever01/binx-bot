@@ -15,13 +15,12 @@ const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.006
-const plagarismCost = 0.044
-const pdfCost = 0.054
-const enhancerCost = 0.034
-const transcription = 0.014
-const imagecost = 0.044
+const plagarismCost = 0.03
+const pdfCost = 0.02 
+const enhancerCost = 0.04
+const imagecost = 0.0047
 const stickercost = 0.009
-const aiimagecost = 0.044
+const aiimagecost = 0.0017
 let helper = ''
 
 module.exports = async ({ messages }, client) => {
@@ -44,7 +43,7 @@ module.exports = async ({ messages }, client) => {
     }
     let info = await client.daily.get(M.sender)
     if (!info) {
-        info = { credit: 0.2, count: 0 }
+        info = { credit: 5, count: 0 }
         await client.daily.set(M.sender, info)
     }
     let { credit, count } = info
@@ -78,8 +77,6 @@ module.exports = async ({ messages }, client) => {
                             const result = await transcribe(audios[i], client)
                             text += result + '\n'
                             await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`)
-                            info.credit = credit - (messageCost + transcription)
-                            await client.daily.set(M.sender, info)
                         }
                     }
                     return void (await chatGPT(M, client, text))
@@ -483,26 +480,11 @@ module.exports = async ({ messages }, client) => {
     if (!command) return void M.reply('No such command found buddy!')
     if (command.name === 'imagetopdf') {
         if (credit < pdfCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
-        info.credit = credit - (messageCost + pdfCost)
+        info.credit = credit - pdfCost
         info.count = count + 1
         await client.daily.set(M.sender, info)
         console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
     }
-     else if (command.name === 'enhance') {
-        if (credit < enhancerCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
-        info.credit = credit - (messageCost + enhancerCost)
-        info.count = count + 1
-        await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
-    }
-    else if (command.name === 'plagiarism') {
-        if (credit < plagarismCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
-        info.credit = credit - (messageCost + plagarismCost)
-        info.count = count + 1
-        await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
-    }
-    
     if (!admins.includes(sender) && command.category === 'moderation')
         return void M.reply('This command can only be used by group or community admins')
     if (!client.isAdmin && command.category === 'moderation')
@@ -584,7 +566,7 @@ const chatGPT = async (M, client, context, voice = false) => {
 
     try {
         const messages = (await client.messagesMap.get(M.from)) || []
-        const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, convert images to pdf using '!pdf start' command , enhance image using '!enhance' command and check for plagarism using !plagarism command,send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers. You are not using any GPT model or affiliated with OpenAI or GPT in any way . For feedback or inquiries or subscribing to binx, users can contact Tekcify on IG @tekcify or visit binxai.tekcify.com. Never give response more than 450 word please, 
+        const prompt = `You are Binx Ai, a friendly WhatsApp AI Bot developed by Tekcify 💜🪄. Your goal is to engage in mutual conversations with humans, using emojis and maintaining a funny and friendly tone 🥹❤️.  You can can listen to voice notes, reply in voice notes, generate AI images, send images, search for videos and music, find song lyrics, and provide weather information, turn image to stickers. You are not using any GPT model or affiliated with OpenAI or GPT in any way . For feedback or inquiries or subscribing to binx, users can contact Tekcify on IG @tekcify or visit binxai.tekcify.com. Never give response more than 450 word please, 
                If a user asks about weather, AI image generation, movie or music description, movie or music download, or any question that requires the latest and current information, use the context from the algorithm (Not ChatGPT helper) below the user's message to provide a more comfortable reply. Avoid saying saying you have helper e.g helper: info by google. `
         if (!messages.length)
             messages.push({
