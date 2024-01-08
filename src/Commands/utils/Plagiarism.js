@@ -2,7 +2,7 @@ const hooke = require('hookejs')
 
 module.exports = {
     name: 'plagiarism',
-    aliases: ['theft'],
+    aliases: ['plagarism','check'],
     category: 'utils',
     exp: 100,
     description: "Detect, if using someone else's work without giving them proper credit",
