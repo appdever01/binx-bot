@@ -44,7 +44,10 @@ const start = async () => {
     const apiKey1 = process.env.OPENAI_KEY1 || ''
     const apiKey2 = process.env.OPENAI_KEY2 || ''
 
-    client.apiKey = Math.random() < 0.8 ? apiKey1 : apiKey2
+    // Randomly select one of the API keys
+    const randomApiKey = Math.random() < 0.8 ? apiKey1 : apiKey2
+
+    client.apiKey = randomApiKey
     client.mods = (process.env.MODS || '2347049972537').split(', ').map((jid) => `${jid}@s.whatsapp.net`)
 
     client.DB = new QuickDB({ driver })
@@ -53,7 +56,6 @@ const start = async () => {
     client.exp = client.DB.table('experience')
     client.daily = client.DB.table('daily')
     client.cmd = new Collection()
-    client.images = new Map()
     client.contact = contact
     client.utils = utils
 
@@ -177,6 +179,8 @@ const start = async () => {
         return void res.json({ successful })
     })
 
+    app.use('/images', express.static('/root/binx-bot/src/Handlers'))
+
     client.ev.on('messages.upsert', async (messages) => await MessageHandler(messages, client))
 
     client.ev.on('group-participants.update', async (event) => await EventsHandler(event, client))
@@ -191,7 +195,7 @@ if (!process.env.URL) return console.error('You have not provided any MongoDB UR
 driver
     .connect()
     .then(() => {
-        console.log('Connected to the database!')
+        console.log(`Connected to the database!`)
         start()
     })
     .catch((err) => console.error(err))

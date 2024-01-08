@@ -12,7 +12,6 @@ const emojis = require('emoji-strip')
 const fs = require('fs')
 const path = require('path')
 const FormData = require('form-data')
-
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.006
@@ -35,18 +34,27 @@ module.exports = async ({ messages }, client) => {
     await moderate(M, client, admins, body)
     const args = body.trim().split(' ')
     const isCmd = args[0].startsWith(client.prefix)
+    const chat = client.images.get(M.sender)
+    if (chat && M.type === 'imageMessage') {
+        const image = await M.download()
+        const images = chat.images || []
+        images.push(image)
+        client.images.set(M.sender, { images })
+        return void M.reply(`*Added image Page: ${images.length}*`)
+    }
+    let info = await client.daily.get(M.sender)
+    if (!info) {
+        info = { credit: 5, count: 0 }
+        await client.daily.set(M.sender, info)
+    }
+    let { credit, count } = info
     const conditions = [isCmd, isGroup, M.key.fromMe]
     if (!conditions.some(Boolean)) {
-        let info = await client.daily.get(M.sender)
-        if (!info) {
-            info = { credit: 0.2, count: 0 }
-            await client.daily.set(M.sender, info)
-        }
-        let { credit, count } = info
         if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add or buy more credits')
         info.credit = credit - messageCost
+        info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit 💰 : $${parseFloat(info.credit).toFixed(3)}\n\nYou can visit binxai.tekcify.com/pay to add or buy more credits`)
+        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}\n\nYou can visit binxai.tekcify.com/pay to add or buy more credits`)
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
@@ -69,11 +77,12 @@ module.exports = async ({ messages }, client) => {
                         for (let i = 0; i < total; i++) {
                             const result = await transcribe(audios[i], client)
                             text += result + '\n'
-                            await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`)
                             info.credit = credit - (messageCost + transcription)
+                            info.count = count + 1
+                            await client.daily.set(M.sender, info)
+                            await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`)
                         }
                     }
-                    
                     return void (await chatGPT(M, client, text))
                 }
                 const result = await transcribe(await M.download(), client)
@@ -241,6 +250,7 @@ module.exports = async ({ messages }, client) => {
                     type: 'full'
                 }).build()
                 info.credit = credit - (messageCost + stickercost)
+                info.count = count + 1
                 await client.daily.set(M.sender, info)
                 return void (await client.sendMessage(M.from, { sticker }, { quoted: M }))
             }  else if (type.lyrics) {
@@ -264,6 +274,7 @@ module.exports = async ({ messages }, client) => {
                     await client.sendMessage(M.from, { image: { url } }, { quoted: M })
                 }
                 info.credit = credit - (messageCost + imagecost)
+                info.count = count + 1
                 await client.daily.set(M.sender, info)
                 return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
                 
@@ -405,6 +416,7 @@ module.exports = async ({ messages }, client) => {
                         caption: 'Imagination brought to life by Binx! 😌💙🔥'
                     })
                     info.credit = credit - (messageCost + imagecost)
+                    info.count = count + 1
                     await client.daily.set(M.sender, info)
                     return true
                 } catch (error) {
@@ -449,6 +461,7 @@ module.exports = async ({ messages }, client) => {
                 await client.sendMessage(M.from, { image: { url } }, { quoted: M })
             }
             info.credit = credit - (messageCost + imagecost)
+            info.count = count + 1
                 await client.daily.set(M.sender, info)
             return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
         } else {
@@ -467,13 +480,33 @@ module.exports = async ({ messages }, client) => {
             M.pushName
         )} in ${chalk.blueBright(result.subject || 'DM')}`
     )
-
     const cmd = args[0].toLowerCase().slice(client.prefix.length)
     const { context, flags } = formatArgs(args)
     const banned = (await client.DB.get('banned'))?.includes(M.sender) || false
     if (banned) return M.reply('You are banned from using the bot')
     const command = client.cmd.get(cmd) || client.cmd.find((command) => command.aliases?.includes(cmd))
     if (!command) return void M.reply('No such command found buddy!')
+    if (command.name === 'imagetopdf') {
+        if (credit < pdfCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
+        info.credit = credit - (messageCost + pdfCost)
+        info.count = count + 1
+        await client.daily.set(M.sender, info)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+    }
+    else if (command.name === 'enhance') {
+        if (credit < enhancerCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
+        info.credit = credit - (messageCost + enhancerCost)
+        info.count = count + 1
+        await client.daily.set(M.sender, info)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+    }
+    else if (command.name === 'plagiarism') {
+        if (credit < plagarismCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
+        info.credit = credit - (messageCost + plagarismCost)
+        info.count = count + 1
+        await client.daily.set(M.sender, info)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+    }
     if (!admins.includes(sender) && command.category === 'moderation')
         return void M.reply('This command can only be used by group or community admins')
     if (!client.isAdmin && command.category === 'moderation')
