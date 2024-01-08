@@ -16,12 +16,13 @@ const FormData = require('form-data')
 const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.006
-const plagarismCost = 0.03
-const pdfCost = 0.04
-const enhancerCost = 0.04
-const imagecost = 0.0047
+const plagarismCost = 0.044
+const pdfCost = 0.054
+const enhancerCost = 0.034
+const transcription = 0.014
+const imagecost = 0.044
 const stickercost = 0.009
-const aiimagecost = 0.0017
+const aiimagecost = 0.044
 let helper = ''
 
 module.exports = async ({ messages }, client) => {
@@ -69,8 +70,10 @@ module.exports = async ({ messages }, client) => {
                             const result = await transcribe(audios[i], client)
                             text += result + '\n'
                             await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`)
+                            info.credit = credit - (messageCost + transcription)
                         }
                     }
+                    
                     return void (await chatGPT(M, client, text))
                 }
                 const result = await transcribe(await M.download(), client)
