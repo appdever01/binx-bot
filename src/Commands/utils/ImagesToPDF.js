@@ -5,14 +5,14 @@ module.exports = {
     exp: 100,
     description: 'Converts images into Pdf document',
     async execute(client, flag, context, M) {
-        if (!context) return void M.reply('Provide some action e. !pdf start!')
+        if (!context) return void M.reply('Provide some action e.g !pdf start!')
         const chat = client.images.get(M.sender)
         const actions = ['start', 'cancel', 'done']
         const action = context.trim().toLowerCase()
         if (!actions.includes(action)) return void M.reply(`Invaild action, try using *${actions.join(', ')}*`)
         if (!chat && action === 'start') {
             client.images.set(M.sender, { images: [] })
-            return void M.reply('Okay, Send the images one by one! 🖼️')
+            return void M.reply('Okay, Send the images one by one!')
         }
         if (chat && action === 'cancel') {
             client.images.delete(M.sender)

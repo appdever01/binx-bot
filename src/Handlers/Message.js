@@ -50,11 +50,11 @@ module.exports = async ({ messages }, client) => {
     let { credit, count } = info
     const conditions = [isCmd, isGroup, M.key.fromMe]
     if (!conditions.some(Boolean)) {
-        if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add or buy more credits')
+        if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - messageCost
         info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}\n\nYou can visit binxai.tekcify.com/pay to add or buy more credits`)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
@@ -77,10 +77,9 @@ module.exports = async ({ messages }, client) => {
                         for (let i = 0; i < total; i++) {
                             const result = await transcribe(audios[i], client)
                             text += result + '\n'
-                            info.credit = credit - (messageCost + transcription)
-                            info.count = count + 1
-                            await client.daily.set(M.sender, info)
                             await M.reply(`🎙️ *${1 + i}/${total}* ▶️ _"${result}"_`)
+                            info.credit = credit - (messageCost + transcription)
+                            await client.daily.set(M.sender, info)
                         }
                     }
                     return void (await chatGPT(M, client, text))
@@ -250,7 +249,6 @@ module.exports = async ({ messages }, client) => {
                     type: 'full'
                 }).build()
                 info.credit = credit - (messageCost + stickercost)
-                info.count = count + 1
                 await client.daily.set(M.sender, info)
                 return void (await client.sendMessage(M.from, { sticker }, { quoted: M }))
             }  else if (type.lyrics) {
@@ -274,7 +272,6 @@ module.exports = async ({ messages }, client) => {
                     await client.sendMessage(M.from, { image: { url } }, { quoted: M })
                 }
                 info.credit = credit - (messageCost + imagecost)
-                info.count = count + 1
                 await client.daily.set(M.sender, info)
                 return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
                 
@@ -416,7 +413,6 @@ module.exports = async ({ messages }, client) => {
                         caption: 'Imagination brought to life by Binx! 😌💙🔥'
                     })
                     info.credit = credit - (messageCost + imagecost)
-                    info.count = count + 1
                     await client.daily.set(M.sender, info)
                     return true
                 } catch (error) {
@@ -461,7 +457,6 @@ module.exports = async ({ messages }, client) => {
                 await client.sendMessage(M.from, { image: { url } }, { quoted: M })
             }
             info.credit = credit - (messageCost + imagecost)
-            info.count = count + 1
                 await client.daily.set(M.sender, info)
             return void M.reply(`Binx AI © ${new Date().getFullYear()} 💜😇📸`)
         } else {
@@ -493,7 +488,7 @@ module.exports = async ({ messages }, client) => {
         await client.daily.set(M.sender, info)
         console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
     }
-    else if (command.name === 'enhance') {
+     else if (command.name === 'enhance') {
         if (credit < enhancerCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - (messageCost + enhancerCost)
         info.count = count + 1
@@ -507,6 +502,7 @@ module.exports = async ({ messages }, client) => {
         await client.daily.set(M.sender, info)
         console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
     }
+    
     if (!admins.includes(sender) && command.category === 'moderation')
         return void M.reply('This command can only be used by group or community admins')
     if (!client.isAdmin && command.category === 'moderation')
