@@ -50,11 +50,11 @@ module.exports = async ({ messages }, client) => {
     let { credit, count } = info
     const conditions = [isCmd, isGroup, M.key.fromMe]
     if (!conditions.some(Boolean)) {
-        if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
+        if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add or buy more credits')
         info.credit = credit - messageCost
         info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}\n\nYou can visit binxai.tekcify.com/pay to add or buy more credits`)
         let result = await ChatGPTHelper(client.apiKey, body)
         if (!/^{(\s*".*"\s*:\s*".*"\s*)}$/.test(result)) result = '{ "normal": null }'
         const type = JSON.parse(result)
@@ -486,21 +486,21 @@ module.exports = async ({ messages }, client) => {
         info.credit = credit - (messageCost + pdfCost)
         info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}`)
     }
      else if (command.name === 'enhance') {
         if (credit < enhancerCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - (messageCost + enhancerCost)
         info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}`)
     }
     else if (command.name === 'plagiarism') {
         if (credit < plagarismCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - (messageCost + plagarismCost)
         info.count = count + 1
         await client.daily.set(M.sender, info)
-        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+        console.log(`Remaining credit 💰: $${parseFloat(info.credit).toFixed(3)}`)
     }
     
     if (!admins.includes(sender) && command.category === 'moderation')

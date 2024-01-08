@@ -5,7 +5,7 @@ module.exports = {
     exp: 100,
     description: 'Converts images into Pdf document',
     async execute(client, flag, context, M) {
-        if (!context) return void M.reply('Provide some action, Baka!')
+        if (!context) return void M.reply('Provide some action e.g !pdf start !')
         const chat = client.images.get(M.sender)
         const actions = ['start', 'cancel', 'done']
         const action = context.trim().toLowerCase()
@@ -28,6 +28,6 @@ module.exports = {
                 { document, mimetype: 'application/pdf', fileName: 'ImagesToPDF - Document.pdf' },
                 { quoted: M }
             ))
-        } else return void M.reply('You have not even start, Baka!')
+        } else return void M.reply('You have not even start buddy!')
     }
 }
