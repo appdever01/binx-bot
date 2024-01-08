@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 module.exports = {
     name: 'imagetopdf',
     aliases: ['imgtopdf', 'pdf'],
@@ -5,7 +6,7 @@ module.exports = {
     exp: 100,
     description: 'Converts images into Pdf document',
     async execute(client, flag, context, M) {
-        if (!context) return void M.reply('Provide some action e.g !pdf start !')
+        if (!context) return void M.reply('Provide some action e.g !pdf start')
         const chat = client.images.get(M.sender)
         const actions = ['start', 'cancel', 'done']
         const action = context.trim().toLowerCase()
@@ -19,15 +20,17 @@ module.exports = {
             return void M.reply('You have cancelled your request!')
         }
         if (chat && action === 'done') {
-            if (!chat.images.length) return void M.reply('Images, Not found!')
-            const document = await client.utils.imagesToPDF(chat.images)
-            await M.reply('Wait, While processing your request!')
-            client.images.delete(M.sender)
+            if (!chat.images.length) return void M.reply('Images not found!');
+            const document = await client.utils.imagesToPDF(chat.images);
+            await M.reply('Wait, while processing your request!');
+            client.images.delete(M.sender);
+
+            const randomFilename = `BinxPDF-${crypto.randomBytes(4).toString('hex')}`;
             return void (await client.sendMessage(
                 M.from,
-                { document, mimetype: 'application/pdf', fileName: 'ImagesToPDF - Document.pdf' },
+                { document, mimetype: 'application/pdf', fileName: `${randomFilename}.pdf` },
                 { quoted: M }
-            ))
+            ));
         } else return void M.reply('You have not even start buddy!')
     }
 }
