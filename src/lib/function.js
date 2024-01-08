@@ -4,10 +4,11 @@ const { promisify } = require('util')
 const exec = promisify(require('child_process').exec)
 const linkify = require('linkifyjs')
 const FormData = require('form-data')
+const PDFDocument = require('pdfkit')
 const { load } = require('cheerio')
 const { createCanvas } = require('canvas')
 const { sizeFormatter } = require('human-readable')
-const { readFile, unlink, writeFile } = require('fs-extra')
+const { createWriteStream, readFile, unlink, writeFile } = require('fs-extra')
 const { removeBackgroundFromImageBase64 } = require('remove.bg')
 
 /**
@@ -248,8 +249,30 @@ const restart = () => {
     })
 }
 
+const imagesToPDF = async (imageUrls) => {
+    const pdf = new PDFDocument({ autoFirstPage: false })
+    let filename = `${tmpdir()}/${Math.random().toString(36)}.pdf`
+    const stream = createWriteStream(filename)
+    pdf.pipe(stream)
+    for (const image of imageUrls) {
+        const data = typeof image === 'string' ? await getBuffer(image) : image
+        const img = pdf.openImage(data)
+        pdf.addPage({ size: [img.width, img.height] })
+        pdf.image(img, 0, 0)
+    }
+    pdf.end()
+    await new Promise((resolve, reject) => {
+        stream.on('finish', () => resolve(filename))
+        stream.on('error', reject)
+    })
+    const buffer = await readFile(filename)
+    await unlink(filename)
+    return buffer
+}
+
 module.exports = {
     calculatePing,
+    imagesToPDF,
     capitalize,
     exec,
     extractNumbers,

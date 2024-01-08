@@ -16,7 +16,7 @@ const chalk = require('chalk')
 const currentUTCTime = new Date().toUTCString()
 const messageCost = 0.006
 const plagarismCost = 0.03
-const pdfCost = 0.04
+const pdfCost = 0.02 // start, cancel, done
 const enhancerCost = 0.04
 const imagecost = 0.0047
 const stickercost = 0.009
@@ -33,16 +33,25 @@ module.exports = async ({ messages }, client) => {
     await moderate(M, client, admins, body)
     const args = body.trim().split(' ')
     const isCmd = args[0].startsWith(client.prefix)
+    const chat = client.images.get(M.sender)
+    if (chat && M.type === 'imageMessage') {
+        const image = await M.download()
+        const images = chat.images || []
+        images.push(image)
+        client.images.set(M.sender, { images })
+        return void M.reply(`*Added image Page: ${images.length}*`)
+    }
+    let info = await client.daily.get(M.sender)
+    if (!info) {
+        info = { credit: 5, count: 0 }
+        await client.daily.set(M.sender, info)
+    }
+    let { credit, count } = info
     const conditions = [isCmd, isGroup, M.key.fromMe]
     if (!conditions.some(Boolean)) {
-        let info = await client.daily.get(M.sender)
-        if (!info) {
-            info = { credit: , count: 0 }
-            await client.daily.set(M.sender, info)
-        }
-        let { credit, count } = info
         if (credit < messageCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
         info.credit = credit - messageCost
+        info.count = count + 1
         await client.daily.set(M.sender, info)
         console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
         let result = await ChatGPTHelper(client.apiKey, body)
@@ -469,6 +478,13 @@ module.exports = async ({ messages }, client) => {
     if (banned) return M.reply('You are banned from using the bot')
     const command = client.cmd.get(cmd) || client.cmd.find((command) => command.aliases?.includes(cmd))
     if (!command) return void M.reply('No such command found buddy!')
+    if (command.name === 'imagetopdf') {
+        if (credit < pdfCost) return void M.reply('Insufficient credit. \n\nKindly visit binxai.tekcify.com/pay to add buy more credits')
+        info.credit = credit - pdfCost
+        info.count = count + 1
+        await client.daily.set(M.sender, info)
+        console.log(`Remaining credit: $${parseFloat(info.credit).toFixed(3)}`)
+    }
     if (!admins.includes(sender) && command.category === 'moderation')
         return void M.reply('This command can only be used by group or community admins')
     if (!client.isAdmin && command.category === 'moderation')
